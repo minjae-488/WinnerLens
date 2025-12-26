@@ -7,10 +7,16 @@
 [![Next.js](https://img.shields.io/badge/Next.js-14-black.svg)](https://nextjs.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-20-green.svg)](https://nodejs.org/)
 
+[![Project Progress](https://img.shields.io/badge/Progress-10%25-orange.svg)](./PROGRESS.md)
+[![GitHub Issues](https://img.shields.io/github/issues/minjae-488/WinnerLens)](https://github.com/minjae-488/WinnerLens/issues)
+[![GitHub Last Commit](https://img.shields.io/github/last-commit/minjae-488/WinnerLens)](https://github.com/minjae-488/WinnerLens/commits/main)
+[![Current Phase](https://img.shields.io/badge/Phase-0%20(30%25)-blue.svg)](https://github.com/minjae-488/WinnerLens/issues/1)
+
 ---
 
 ## 목차
 
+- [📊 진행 상황](./PROGRESS.md) ⭐
 - [프로젝트 소개](#-프로젝트-소개)
 - [주요 기능](#-주요-기능)
 - [기술 스택](#-기술-스택)
