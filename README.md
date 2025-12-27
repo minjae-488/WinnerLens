@@ -2,11 +2,18 @@
 
 > **AI 기반 쿠팡 셀러 자동화 플랫폼** - 상품 발굴부터 등록까지 End-to-End 자동화
 
+[![WinnerLens CI](https://github.com/minjae-488/WinnerLens/actions/workflows/ci.yml/badge.svg)](https://github.com/minjae-488/WinnerLens/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue.svg)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-14-black.svg)](https://nextjs.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-20-green.svg)](https://nodejs.org/)
 [![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
+
+<div align="center">
+
+### 🌐 [Live Demo](https://winnerlens.vercel.app) | 📖 [Documentation](./docs) | 🐛 [Issues](https://github.com/minjae-488/WinnerLens/issues)
+
+</div>
 
 ---
 

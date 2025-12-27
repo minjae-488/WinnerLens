@@ -36,6 +36,12 @@ jobs:
         DATABASE_URL: "postgresql://user:password@localhost:5432/winnerlens"
         JWT_SECRET: "ci-test-secret"
 
+    - name: 🎉 Backend Build Success
+      if: success()
+      run: |
+        echo "✅ Backend build completed successfully!"
+        echo "📦 Build artifacts ready for deployment"
+
   frontend-build:
     runs-on: ubuntu-latest
     defaults:
@@ -60,3 +66,34 @@ jobs:
       env:
         NEXT_PUBLIC_API_URL: "http://localhost:3000/api/v1"
         # 빌드 중 ESLint 에러 무시 설정은 next.config.js에 이미 되어 있음
+
+    - name: 🎉 Frontend Build Success
+      if: success()
+      run: |
+        echo "✅ Frontend build completed successfully!"
+        echo "🌐 Live Demo: https://winnerlens.vercel.app"
+        echo "📊 GitHub Actions: https://github.com/minjae-488/WinnerLens/actions"
+        echo "🐛 Issues: https://github.com/minjae-488/WinnerLens/issues"
+
+  build-summary:
+    runs-on: ubuntu-latest
+    needs: [backend-build, frontend-build]
+    if: always()
+    
+    steps:
+    - name: 📋 Build Summary
+      run: |
+        echo "## 🏗️ WinnerLens Build Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📊 Build Status" >> $GITHUB_STEP_SUMMARY
+        echo "- Backend: ${{ needs.backend-build.result }}" >> $GITHUB_STEP_SUMMARY
+        echo "- Frontend: ${{ needs.frontend-build.result }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 🔗 Quick Links" >> $GITHUB_STEP_SUMMARY
+        echo "- 🌐 [Live Demo](https://winnerlens.vercel.app)" >> $GITHUB_STEP_SUMMARY
+        echo "- 📖 [Documentation](https://github.com/minjae-488/WinnerLens/blob/main/README.md)" >> $GITHUB_STEP_SUMMARY
+        echo "- 🐛 [Report Issues](https://github.com/minjae-488/WinnerLens/issues)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "---" >> $GITHUB_STEP_SUMMARY
+        echo "Built with ❤️ by WinnerLens Team" >> $GITHUB_STEP_SUMMARY
+
