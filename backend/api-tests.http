@@ -1,0 +1,129 @@
+### WinnerLens API Test Collection
+### 백엔드 API 테스트를 위한 HTTP 요청 모음
+
+@baseUrl = http://localhost:3000
+@apiUrl = {{baseUrl}}/api/v1
+
+### Variables (테스트 후 자동으로 업데이트됨)
+@authToken = 
+@userId = 
+
+###############################################
+# Health Check
+###############################################
+
+### Health Check
+GET {{baseUrl}}/health
+
+###############################################
+# API Info
+###############################################
+
+### API v1 Info
+GET {{apiUrl}}
+
+###############################################
+# Authentication
+###############################################
+
+### 1. 회원가입 (Register)
+POST {{apiUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@winnerlens.com",
+  "password": "Test1234",
+  "name": "Test User"
+}
+
+### 2. 로그인 (Login)
+POST {{apiUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@winnerlens.com",
+  "password": "Test1234"
+}
+
+### 3. 현재 사용자 정보 조회 (Get Current User)
+GET {{apiUrl}}/auth/me
+Authorization: Bearer {{authToken}}
+
+###############################################
+# Validation Tests
+###############################################
+
+### 회원가입 - 잘못된 이메일 형식
+POST {{apiUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "invalid-email",
+  "password": "Test1234",
+  "name": "Test User"
+}
+
+### 회원가입 - 약한 비밀번호 (숫자 없음)
+POST {{apiUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "test2@winnerlens.com",
+  "password": "TestPassword",
+  "name": "Test User"
+}
+
+### 회원가입 - 약한 비밀번호 (대문자 없음)
+POST {{apiUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "test2@winnerlens.com",
+  "password": "testpassword123",
+  "name": "Test User"
+}
+
+### 회원가입 - 짧은 비밀번호
+POST {{apiUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "test2@winnerlens.com",
+  "password": "Test12",
+  "name": "Test User"
+}
+
+### 로그인 - 잘못된 비밀번호
+POST {{apiUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@winnerlens.com",
+  "password": "WrongPassword123"
+}
+
+### 로그인 - 존재하지 않는 사용자
+POST {{apiUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "nonexistent@winnerlens.com",
+  "password": "Test1234"
+}
+
+### 인증 없이 보호된 엔드포인트 접근
+GET {{apiUrl}}/auth/me
+
+### 잘못된 토큰으로 보호된 엔드포인트 접근
+GET {{apiUrl}}/auth/me
+Authorization: Bearer invalid.token.here
+
+###############################################
+# Error Cases
+###############################################
+
+### 404 - 존재하지 않는 라우트
+GET {{apiUrl}}/nonexistent
+
+### 405 - 잘못된 HTTP 메서드
+GET {{apiUrl}}/auth/register
