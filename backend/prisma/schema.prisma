@@ -1,0 +1,140 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 사용자 모델
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String?
+  
+  // 구독 정보
+  subscriptionTier String @default("Basic") // Basic, Pro, Team
+  subscriptionStatus String @default("active") // active, inactive, trial
+  
+  // 관계
+  products      Product[]
+  registrations Registration[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("users")
+}
+
+// 상품 모델
+model Product {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // 상품 기본 정보
+  productName String
+  category    String
+  description String?
+  
+  // 가격 및 마진
+  price       Decimal  @db.Decimal(10, 2)
+  cost        Decimal? @db.Decimal(10, 2)
+  margin      Decimal? @db.Decimal(5, 2)
+  
+  // 옵션 (JSON)
+  options     Json?
+  
+  // 스코어링
+  demandScore      Int? // 수요 점수 (0-100)
+  competitionScore Int? // 경쟁 점수 (0-100)
+  marginScore      Int? // 마진 점수 (0-100)
+  operabilityScore Int? // 운영 가능성 점수 (0-100)
+  totalScore       Int? // 종합 점수 (0-100)
+  
+  // 상태
+  status            String @default("draft") // draft, pending, registered, rejected
+  coupangProductId  String?
+  
+  // 관계
+  registrations Registration[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("products")
+  @@index([userId])
+  @@index([status])
+  @@index([category])
+}
+
+// 트렌드 데이터 모델
+model TrendData {
+  id           String   @id @default(uuid())
+  
+  // 트렌드 정보
+  keyword      String
+  category     String?
+  searchVolume Int?
+  growthRate   Decimal? @db.Decimal(5, 2)
+  
+  // 데이터 소스
+  source       String   // google, naver, coupang
+  
+  // 날짜
+  date         DateTime @default(now())
+  
+  createdAt    DateTime @default(now())
+  
+  @@map("trend_data")
+  @@index([keyword])
+  @@index([category])
+  @@index([date])
+}
+
+// 등록 이력 모델
+model Registration {
+  id          String   @id @default(uuid())
+  
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // 등록 결과
+  status       String   // success, failed, pending
+  errorMessage String?
+  
+  // 쿠팡 응답
+  coupangResponse Json?
+  
+  registeredAt DateTime @default(now())
+  
+  @@map("registrations")
+  @@index([productId])
+  @@index([userId])
+  @@index([status])
+}
+
+// 구독 플랜 모델 (선택적)
+model SubscriptionPlan {
+  id          String   @id @default(uuid())
+  
+  name        String   @unique // Basic, Pro, Team
+  price       Decimal  @db.Decimal(10, 2)
+  
+  // 기능 제한
+  maxProducts Int      // 월 최대 등록 건수
+  features    Json     // 기능 목록
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("subscription_plans")
+}

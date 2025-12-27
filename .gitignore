@@ -73,3 +73,9 @@ logs/
 tmp/
 temp/
 *.tmp
+
+# Docker
+docker-compose.override.yml
+
+# Project specific
+issues.json

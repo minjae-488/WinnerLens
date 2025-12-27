@@ -110,5 +110,28 @@ graph LR
 
 ---
 
-> **참고**: 이 내용을 기존 README.md 파일의 상단(목차 이전)에 삽입하세요.
-> 나머지 내용(프로젝트 소개, 기술 스택, 아키텍처 등)은 이미 업데이트되었습니다.
+## 📚 문서
+
+- [PRD (제품 요구사항 문서)](./prd.md)
+- [기술 명세서](./tech-spec.md)
+- [백엔드 README](./backend/README.md)
+- [프론트엔드 README](./frontend/README.md)
+- [AI 서비스 README](./ai-service/README.md)
+
+## 🤝 기여하기
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+<div align="center">
+Made with ❤️ by WinnerLens Team
+</div>
