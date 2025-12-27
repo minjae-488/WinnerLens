@@ -10,6 +10,7 @@ import {
     UpdateProductInput,
     UpdateScoreInput,
     CategoryStats,
+    TrendData,
 } from './types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api/v1';
@@ -192,6 +193,44 @@ class ApiClient {
 
     async getCategoryStats(): Promise<CategoryStats[]> {
         const response = await this.request<CategoryStats[]>('/products/stats/categories', {
+            headers: this.getHeaders(true),
+        });
+
+        return response.data!;
+    }
+
+    // ==================== AI API ====================
+
+    async generateProductName(category: string, keywords: string[]): Promise<string[]> {
+        const response = await this.request<{ names: string[] }>('/ai/product-name', {
+            method: 'POST',
+            headers: this.getHeaders(true),
+            body: JSON.stringify({ category, keywords }),
+        });
+
+        return response.data!.names;
+    }
+
+    async generateProductDescription(productName: string, category: string, features: string[]): Promise<string> {
+        const response = await this.request<{ description: string }>('/ai/product-description', {
+            method: 'POST',
+            headers: this.getHeaders(true),
+            body: JSON.stringify({ productName, category, features }),
+        });
+
+        return response.data!.description;
+    }
+
+    // ==================== 트렌드 API ====================
+
+    async getTrends(category?: string, period?: string): Promise<TrendData> {
+        const queryParams = new URLSearchParams();
+        if (category) queryParams.append('category', category);
+        if (period) queryParams.append('period', period);
+
+        const endpoint = `/trends?${queryParams.toString()}`;
+
+        const response = await this.request<TrendData>(endpoint, {
             headers: this.getHeaders(true),
         });
 

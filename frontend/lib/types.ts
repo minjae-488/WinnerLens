@@ -110,3 +110,30 @@ export interface UpdateScoreInput {
     marginScore?: number;
     operabilityScore?: number;
 }
+
+export interface RisingKeyword {
+    keyword: string;
+    growth: number;
+}
+
+export interface TrendChartData {
+    labels: string[];
+    datasets: {
+        label: string;
+        data: number[];
+        borderColor: string;
+        backgroundColor: string;
+    }[];
+}
+
+export interface TrendData {
+    category: string;
+    period: string;
+    chartData: TrendChartData;
+    risingKeywords: RisingKeyword[];
+    summary: {
+        totalSearchVolume: number;
+        averageCompetition: number;
+        topKeyword: string;
+    };
+}

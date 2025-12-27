@@ -1,14 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
+import { useAuthStore } from '@/lib/auth.store';
+import { showToast } from '@/lib/toast';
 
 export default function LoginPage() {
     const router = useRouter();
+    const { setUser, isAuthenticated } = useAuthStore();
     const [isLogin, setIsLogin] = useState(true);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+
+    // Redirect if already authenticated
+    useEffect(() => {
+        if (isAuthenticated) {
+            router.push('/dashboard');
+        }
+    }, [isAuthenticated, router]);
 
     const [formData, setFormData] = useState({
         email: '',
@@ -23,21 +33,39 @@ export default function LoginPage() {
 
         try {
             if (isLogin) {
-                await api.login({
+                const authData = await api.login({
                     email: formData.email,
                     password: formData.password,
                 });
+
+                // Update auth store
+                setUser(authData.user);
+
+                // Show success message
+                showToast.success(`환영합니다, ${authData.user.name || authData.user.email}님!`);
+
+                // Redirect to dashboard
+                router.push('/dashboard');
             } else {
-                await api.register({
+                const authData = await api.register({
                     email: formData.email,
                     password: formData.password,
                     name: formData.name || undefined,
                 });
-            }
 
-            router.push('/dashboard');
+                // Update auth store
+                setUser(authData.user);
+
+                // Show success message
+                showToast.success('회원가입이 완료되었습니다!');
+
+                // Redirect to dashboard
+                router.push('/dashboard');
+            }
         } catch (err: any) {
-            setError(err.message || '오류가 발생했습니다');
+            const errorMessage = err.message || '오류가 발생했습니다';
+            setError(errorMessage);
+            showToast.error(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -70,8 +98,8 @@ export default function LoginPage() {
                         <button
                             onClick={() => setIsLogin(true)}
                             className={`flex-1 py-2 rounded-md font-medium transition-smooth ${isLogin
-                                    ? 'bg-white dark:bg-gray-800 text-blue-600 shadow-sm'
-                                    : 'text-gray-600 dark:text-gray-400'
+                                ? 'bg-white dark:bg-gray-800 text-blue-600 shadow-sm'
+                                : 'text-gray-600 dark:text-gray-400'
                                 }`}
                         >
                             로그인
@@ -79,8 +107,8 @@ export default function LoginPage() {
                         <button
                             onClick={() => setIsLogin(false)}
                             className={`flex-1 py-2 rounded-md font-medium transition-smooth ${!isLogin
-                                    ? 'bg-white dark:bg-gray-800 text-blue-600 shadow-sm'
-                                    : 'text-gray-600 dark:text-gray-400'
+                                ? 'bg-white dark:bg-gray-800 text-blue-600 shadow-sm'
+                                : 'text-gray-600 dark:text-gray-400'
                                 }`}
                         >
                             회원가입

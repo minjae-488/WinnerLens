@@ -8,6 +8,8 @@ import { ApiResponseUtil } from './utils/response';
 // Routes
 import authRoutes from './routes/auth.routes';
 import productRoutes from './routes/product.routes';
+import aiRoutes from './routes/ai.routes';
+import trendRoutes from './routes/trend.routes';
 
 dotenv.config();
 
@@ -56,6 +58,7 @@ app.get('/api/v1', (req: Request, res: Response) => {
             health: '/health',
             auth: '/api/v1/auth',
             products: '/api/v1/products',
+            ai: '/api/v1/ai',
             trends: '/api/v1/trends',
         },
     });
@@ -64,6 +67,8 @@ app.get('/api/v1', (req: Request, res: Response) => {
 // API v1 Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/products', productRoutes);
+app.use('/api/v1/ai', aiRoutes);
+app.use('/api/v1/trends', trendRoutes);
 
 // 404 handler
 app.use((req: Request, res: Response) => {

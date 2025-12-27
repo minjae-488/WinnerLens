@@ -29,7 +29,7 @@
 ✅ AI 추천으로 30분 내 유망 상품 발굴
 ✅ 데이터 기반 스코어링으로 성공률 3배
 ✅ 자동 검수로 반려율 10% 이하
-✅ GPT-4 생성으로 일관된 고품질 리스팅
+✅ Google Gemini 생성으로 빠르고 정확한 리스팅
 ```
 
 </div>
@@ -71,7 +71,7 @@
 <td width="50%">
 
 #### 🤖 AI 리스팅 생성
-- GPT-4 기반 상품명 생성
+- Google Gemini 기반 상품명 생성
 - SEO 최적화 설명 작성
 - 옵션 자동 추출
 - 고시정보 자동 채움
@@ -102,11 +102,43 @@ graph LR
     style F fill:#4CAF50,color:#fff
 ```
 
-- **모던 풀스택**: Next.js 14 + Express + FastAPI
+- **모던 풀스택**: Next.js 14 + Express
 - **타입 안전성**: TypeScript 100% + Prisma ORM
-- **확장성**: ECS Fargate Auto Scaling + Redis Cluster
-- **관찰성**: Sentry + CloudWatch + Grafana
-- **자동화**: GitHub Actions CI/CD + Terraform IaC
+- **AI 엔진**: Google Gemini 1.5 Flash
+- **데이터베이스**: PostgreSQL
+
+## 🚀 시작하기 (Getting Started)
+
+### 사전 요구사항
+- Node.js 18+
+- PostgreSQL
+
+### 설치 및 실행
+
+1. **저장소 클론**
+   ```bash
+   git clone https://github.com/yourusername/winnerlens.git
+   ```
+
+2. **백엔드 설정**
+   ```bash
+   cd winnerlens/backend
+   npm install
+   # .env 파일 설정 (DB, JWT, Gemini Key)
+   npm run dev
+   ```
+
+3. **프론트엔드 설정**
+   ```bash
+   cd winnerlens/frontend
+   npm install
+   # .env.local 파일 설정 (API URL)
+   npm run dev
+   ```
+
+4. **접속**
+   - 프론트엔드: http://localhost:3001
+   - 백엔드 API: http://localhost:3000
 
 ---
 
