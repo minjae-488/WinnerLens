@@ -7,6 +7,7 @@
 ### Variables (테스트 후 자동으로 업데이트됨)
 @authToken = 
 @userId = 
+@productId = 
 
 ###############################################
 # Health Check
@@ -50,6 +51,189 @@ GET {{apiUrl}}/auth/me
 Authorization: Bearer {{authToken}}
 
 ###############################################
+# Products - CRUD Operations
+###############################################
+
+### 1. 상품 생성 (Create Product)
+POST {{apiUrl}}/products
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "productName": "무선 블루투스 이어폰",
+  "category": "전자제품",
+  "description": "고음질 무선 이어폰, 노이즈 캔슬링 기능",
+  "price": 89000,
+  "cost": 45000,
+  "options": {
+    "color": ["블랙", "화이트", "핑크"],
+    "warranty": "1년"
+  }
+}
+
+### 2. 상품 목록 조회 (Get Products - Default)
+GET {{apiUrl}}/products
+Authorization: Bearer {{authToken}}
+
+### 3. 상품 목록 조회 - 페이지네이션
+GET {{apiUrl}}/products?page=1&limit=5
+Authorization: Bearer {{authToken}}
+
+### 4. 상품 목록 조회 - 카테고리 필터
+GET {{apiUrl}}/products?category=전자제품
+Authorization: Bearer {{authToken}}
+
+### 5. 상품 목록 조회 - 상태 필터
+GET {{apiUrl}}/products?status=draft
+Authorization: Bearer {{authToken}}
+
+### 6. 상품 목록 조회 - 검색
+GET {{apiUrl}}/products?search=이어폰
+Authorization: Bearer {{authToken}}
+
+### 7. 상품 목록 조회 - 정렬 (가격 오름차순)
+GET {{apiUrl}}/products?sortBy=price&sortOrder=asc
+Authorization: Bearer {{authToken}}
+
+### 8. 상품 목록 조회 - 정렬 (총점 내림차순)
+GET {{apiUrl}}/products?sortBy=totalScore&sortOrder=desc
+Authorization: Bearer {{authToken}}
+
+### 9. 상품 목록 조회 - 복합 필터
+GET {{apiUrl}}/products?category=전자제품&status=draft&sortBy=createdAt&sortOrder=desc&page=1&limit=10
+Authorization: Bearer {{authToken}}
+
+### 10. 상품 상세 조회 (Get Product by ID)
+GET {{apiUrl}}/products/{{productId}}
+Authorization: Bearer {{authToken}}
+
+### 11. 상품 수정 (Update Product)
+PATCH {{apiUrl}}/products/{{productId}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "productName": "프리미엄 무선 블루투스 이어폰",
+  "price": 99000,
+  "description": "업그레이드된 고음질 무선 이어폰"
+}
+
+### 12. 상품 상태 변경
+PATCH {{apiUrl}}/products/{{productId}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "status": "pending"
+}
+
+### 13. 상품 삭제 (Delete Product)
+DELETE {{apiUrl}}/products/{{productId}}
+Authorization: Bearer {{authToken}}
+
+###############################################
+# Products - Scoring
+###############################################
+
+### 1. 상품 스코어 업데이트 (전체)
+PATCH {{apiUrl}}/products/{{productId}}/score
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "demandScore": 85,
+  "competitionScore": 70,
+  "marginScore": 90,
+  "operabilityScore": 75
+}
+
+### 2. 상품 스코어 부분 업데이트
+PATCH {{apiUrl}}/products/{{productId}}/score
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "demandScore": 95
+}
+
+###############################################
+# Products - Statistics
+###############################################
+
+### 카테고리별 통계 조회
+GET {{apiUrl}}/products/stats/categories
+Authorization: Bearer {{authToken}}
+
+###############################################
+# Products - Batch Create (테스트 데이터)
+###############################################
+
+### 테스트 상품 1 - 스마트워치
+POST {{apiUrl}}/products
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "productName": "스마트워치 Pro",
+  "category": "전자제품",
+  "description": "건강 관리 기능이 강화된 스마트워치",
+  "price": 250000,
+  "cost": 150000
+}
+
+### 테스트 상품 2 - 노트북 거치대
+POST {{apiUrl}}/products
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "productName": "알루미늄 노트북 거치대",
+  "category": "사무용품",
+  "description": "각도 조절 가능한 프리미엄 거치대",
+  "price": 35000,
+  "cost": 18000
+}
+
+### 테스트 상품 3 - USB 충전기
+POST {{apiUrl}}/products
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "productName": "고속 USB-C 충전기 65W",
+  "category": "전자제품",
+  "description": "노트북, 태블릿, 스마트폰 동시 충전",
+  "price": 45000,
+  "cost": 22000
+}
+
+### 테스트 상품 4 - 무선 마우스
+POST {{apiUrl}}/products
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "productName": "인체공학 무선 마우스",
+  "category": "전자제품",
+  "description": "손목 부담을 줄이는 버티컬 디자인",
+  "price": 42000,
+  "cost": 25000
+}
+
+### 테스트 상품 5 - 책상 정리함
+POST {{apiUrl}}/products
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "productName": "원목 책상 정리함",
+  "category": "사무용품",
+  "description": "친환경 원목 소재의 멀티 수납함",
+  "price": 28000,
+  "cost": 12000
+}
+
+###############################################
 # Validation Tests
 ###############################################
 
@@ -63,67 +247,62 @@ Content-Type: application/json
   "name": "Test User"
 }
 
-### 회원가입 - 약한 비밀번호 (숫자 없음)
-POST {{apiUrl}}/auth/register
+### 상품 생성 - 필수 필드 누락
+POST {{apiUrl}}/products
+Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
-  "email": "test2@winnerlens.com",
-  "password": "TestPassword",
-  "name": "Test User"
+  "productName": "테스트 상품"
 }
 
-### 회원가입 - 약한 비밀번호 (대문자 없음)
-POST {{apiUrl}}/auth/register
+### 상품 생성 - 잘못된 가격 (음수)
+POST {{apiUrl}}/products
+Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
-  "email": "test2@winnerlens.com",
-  "password": "testpassword123",
-  "name": "Test User"
+  "productName": "테스트 상품",
+  "category": "테스트",
+  "price": -1000,
+  "cost": 500
 }
 
-### 회원가입 - 짧은 비밀번호
-POST {{apiUrl}}/auth/register
+### 상품 생성 - 잘못된 마진 (100 초과)
+POST {{apiUrl}}/products
+Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
-  "email": "test2@winnerlens.com",
-  "password": "Test12",
-  "name": "Test User"
+  "productName": "테스트 상품",
+  "category": "테스트",
+  "price": 10000,
+  "margin": 150
 }
 
-### 로그인 - 잘못된 비밀번호
-POST {{apiUrl}}/auth/login
+### 상품 스코어 - 범위 초과
+PATCH {{apiUrl}}/products/{{productId}}/score
+Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
-  "email": "test@winnerlens.com",
-  "password": "WrongPassword123"
+  "demandScore": 150
 }
-
-### 로그인 - 존재하지 않는 사용자
-POST {{apiUrl}}/auth/login
-Content-Type: application/json
-
-{
-  "email": "nonexistent@winnerlens.com",
-  "password": "Test1234"
-}
-
-### 인증 없이 보호된 엔드포인트 접근
-GET {{apiUrl}}/auth/me
-
-### 잘못된 토큰으로 보호된 엔드포인트 접근
-GET {{apiUrl}}/auth/me
-Authorization: Bearer invalid.token.here
 
 ###############################################
 # Error Cases
 ###############################################
 
+### 인증 없이 상품 조회
+GET {{apiUrl}}/products
+
+### 존재하지 않는 상품 조회
+GET {{apiUrl}}/products/non-existent-id
+Authorization: Bearer {{authToken}}
+
+### 다른 사용자의 상품 수정 시도 (권한 없음)
+# 먼저 다른 계정으로 로그인 후 테스트
+
 ### 404 - 존재하지 않는 라우트
 GET {{apiUrl}}/nonexistent
 
-### 405 - 잘못된 HTTP 메서드
-GET {{apiUrl}}/auth/register

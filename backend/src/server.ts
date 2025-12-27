@@ -7,6 +7,7 @@ import { ApiResponseUtil } from './utils/response';
 
 // Routes
 import authRoutes from './routes/auth.routes';
+import productRoutes from './routes/product.routes';
 
 dotenv.config();
 
@@ -62,6 +63,7 @@ app.get('/api/v1', (req: Request, res: Response) => {
 
 // API v1 Routes
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/products', productRoutes);
 
 // 404 handler
 app.use((req: Request, res: Response) => {
