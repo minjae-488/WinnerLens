@@ -128,7 +128,7 @@ export default function TrendsPage() {
     } : { labels: [], datasets: [] };
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-10">
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
@@ -159,41 +159,41 @@ export default function TrendsPage() {
             ) : trendData ? (
                 <>
                     {/* Summary Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <AnimatedCard delay={0} className="card bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-800">
-                            <div className="flex items-start justify-between">
+                            <div className="flex items-start justify-between p-2">
                                 <div>
-                                    <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300">총 연간 검색량</h3>
-                                    <p className="text-4xl font-bold text-blue-600 dark:text-blue-400 mt-2">
+                                    <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-3">총 연간 검색량</h3>
+                                    <p className="text-4xl font-bold text-blue-600 dark:text-blue-400 mt-1">
                                         {trendData.summary.totalSearchVolume.toLocaleString()}
                                     </p>
-                                    <p className="text-xs text-blue-500 mt-1">지난 12개월 기준</p>
+                                    <p className="text-xs text-blue-500 mt-2">지난 12개월 기준</p>
                                 </div>
                                 <TrendingUp className="w-10 h-10 text-blue-400" />
                             </div>
                         </AnimatedCard>
 
                         <AnimatedCard delay={0.1} className="card bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 border-red-200 dark:border-red-800">
-                            <div className="flex items-start justify-between">
+                            <div className="flex items-start justify-between p-2">
                                 <div>
-                                    <h3 className="text-sm font-medium text-red-800 dark:text-red-300">평균 경쟁 강도</h3>
-                                    <p className="text-4xl font-bold text-red-600 dark:text-red-400 mt-2">
+                                    <h3 className="text-sm font-medium text-red-800 dark:text-red-300 mb-3">평균 경쟁 강도</h3>
+                                    <p className="text-4xl font-bold text-red-600 dark:text-red-400 mt-1">
                                         {trendData.summary.averageCompetition}/100
                                     </p>
-                                    <p className="text-xs text-red-500 mt-1">낮을수록 진입 용이</p>
+                                    <p className="text-xs text-red-500 mt-2">낮을수록 진입 용이</p>
                                 </div>
                                 <Target className="w-10 h-10 text-red-400" />
                             </div>
                         </AnimatedCard>
 
                         <AnimatedCard delay={0.2} className="card bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 border-green-200 dark:border-green-800">
-                            <div className="flex items-start justify-between">
+                            <div className="flex items-start justify-between p-2">
                                 <div>
-                                    <h3 className="text-sm font-medium text-green-800 dark:text-green-300">지금 뜨는 키워드</h3>
-                                    <p className="text-2xl font-bold text-green-600 dark:text-green-400 mt-2 truncate">
+                                    <h3 className="text-sm font-medium text-green-800 dark:text-green-300 mb-3">지금 뜨는 키워드</h3>
+                                    <p className="text-2xl font-bold text-green-600 dark:text-green-400 mt-1 truncate">
                                         {trendData.summary.topKeyword}
                                     </p>
-                                    <p className="text-xs text-green-500 mt-1">가장 높은 성장률 기록</p>
+                                    <p className="text-xs text-green-500 mt-2">가장 높은 성장률 기록</p>
                                 </div>
                                 <Zap className="w-10 h-10 text-green-400" />
                             </div>
@@ -208,14 +208,14 @@ export default function TrendsPage() {
                         </div>
                     </AnimatedCard>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                         {/* Market Insights */}
                         {trendData.marketInsights && (
                             <AnimatedCard delay={0.4} className="card">
                                 <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
                                     💡 시장 인사이트
                                 </h2>
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-2 gap-5">
                                     <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
                                         <p className="text-sm text-gray-600 dark:text-gray-400">성장률</p>
                                         <p className="text-2xl font-bold text-purple-600 dark:text-purple-400 mt-1">
@@ -241,13 +241,13 @@ export default function TrendsPage() {
                                         </p>
                                     </div>
                                 </div>
-                                <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                <div className="mt-6 p-5 bg-gray-50 dark:bg-gray-800 rounded-lg">
                                     <p className="text-sm text-gray-600 dark:text-gray-400">계절성</p>
                                     <p className="text-lg font-semibold text-gray-900 dark:text-white mt-1">
                                         {trendData.marketInsights.seasonality}
                                     </p>
                                 </div>
-                                <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                <div className="mt-6 p-5 bg-gray-50 dark:bg-gray-800 rounded-lg">
                                     <p className="text-sm text-gray-600 dark:text-gray-400">타겟 연령층</p>
                                     <p className="text-lg font-semibold text-gray-900 dark:text-white mt-1">
                                         {trendData.marketInsights.targetAge}
@@ -318,7 +318,7 @@ export default function TrendsPage() {
                         )}
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                         {/* Rising Keywords */}
                         <AnimatedCard delay={0.6} className="card lg:col-span-1">
                             <h2 className="text-xl font-semibold mb-4">🔥 급상승 키워드 TOP 5</h2>
@@ -424,8 +424,8 @@ export default function TrendsPage() {
                                 <div className="p-4 bg-white dark:bg-gray-800 rounded-lg">
                                     <p className="text-xs text-gray-600 dark:text-gray-400">리스크 레벨</p>
                                     <p className={`text-lg font-bold mt-1 ${trendData.recommendations.riskLevel === '낮음' ? 'text-green-600 dark:text-green-400' :
-                                            trendData.recommendations.riskLevel === '중간' ? 'text-yellow-600 dark:text-yellow-400' :
-                                                'text-red-600 dark:text-red-400'
+                                        trendData.recommendations.riskLevel === '중간' ? 'text-yellow-600 dark:text-yellow-400' :
+                                            'text-red-600 dark:text-red-400'
                                         }`}>
                                         {trendData.recommendations.riskLevel}
                                     </p>
