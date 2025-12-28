@@ -106,6 +106,7 @@ export default function TrendsPage() {
         labels: trendData.chartData.labels,
         datasets: trendData.chartData.datasets.map((dataset, index) => ({
             ...dataset,
+            yAxisID: index === 0 ? 'y' : 'y1', // 첫 번째 데이터셋은 y축(검색량), 두 번째는 y1축(경쟁 강도)
             borderWidth: 2,
             tension: 0.4,
             fill: index === 0,
@@ -152,16 +153,38 @@ export default function TrendsPage() {
         },
         scales: {
             y: {
+                type: 'linear' as const,
+                display: true,
+                position: 'left' as const,
                 beginAtZero: true,
                 grid: {
                     color: 'rgba(0, 0, 0, 0.03)',
                     drawBorder: false,
                 },
                 ticks: {
-                    font: {
-                        size: 11,
-                    },
+                    font: { size: 11 },
                     color: '#9ca3af',
+                    callback: function (value: any) {
+                        return value >= 1000 ? value.toLocaleString() : value;
+                    }
+                },
+            },
+            y1: {
+                type: 'linear' as const,
+                display: true,
+                position: 'right' as const,
+                beginAtZero: true,
+                min: 0,
+                max: 100,
+                grid: {
+                    drawOnChartArea: false, // 오른쪽 축 그리드 삭제
+                },
+                ticks: {
+                    font: { size: 11 },
+                    color: '#ef4444', // 경쟁 강도 색상과 일치
+                    callback: function (value: any) {
+                        return `${value}`;
+                    }
                 },
             },
             x: {
@@ -169,9 +192,7 @@ export default function TrendsPage() {
                     display: false,
                 },
                 ticks: {
-                    font: {
-                        size: 11,
-                    },
+                    font: { size: 11 },
                     color: '#9ca3af',
                 },
             },
