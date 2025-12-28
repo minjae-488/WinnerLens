@@ -12,6 +12,7 @@ import { Loading } from '@/components/ui/Loading';
 import { ScoreDisplay } from '@/components/ScoreDisplay';
 import { Product, UpdateProductInput, UpdateScoreInput } from '@/lib/types';
 import { AiGeneratorModal } from '@/components/AiGeneratorModal';
+import { CoupangRegisterButton } from '@/components/CoupangRegisterButton';
 
 export default function ProductDetailPage() {
     const router = useRouter();
@@ -149,6 +150,13 @@ export default function ProductDetailPage() {
                     </p>
                 </div>
                 <div className="flex gap-2">
+                    <CoupangRegisterButton
+                        productId={product.id}
+                        productName={product.productName}
+                        isRegistered={!!product.coupangProductId}
+                        coupangProductId={product.coupangProductId}
+                        onSuccess={loadProduct}
+                    />
                     <Button
                         variant="outline"
                         onClick={() => setIsEditing(!isEditing)}

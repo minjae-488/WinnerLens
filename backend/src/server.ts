@@ -11,6 +11,7 @@ import productRoutes from './routes/product.routes';
 import aiRoutes from './routes/ai.routes';
 import trendRoutes from './routes/trend.routes';
 import inspectionRoutes from './routes/inspection.routes';
+import coupangRoutes from './routes/coupang.routes';
 
 dotenv.config();
 
@@ -71,6 +72,7 @@ app.use('/api/v1/products', productRoutes);
 app.use('/api/v1/ai', aiRoutes);
 app.use('/api/v1/trends', trendRoutes);
 app.use('/api/v1/inspection', inspectionRoutes);
+app.use('/api/v1/coupang', coupangRoutes);
 
 // 404 handler
 app.use((req: Request, res: Response) => {
