@@ -118,41 +118,87 @@ graph LR
 
 ## 🚀 시작하기 (Getting Started)
 
-### 사전 요구사항
-- Node.js 18+
-- PostgreSQL
+### ⚡ 빠른 시작 (Quick Start)
 
-### 설치 및 실행
+#### Windows 사용자
+
+프로젝트 폴더에서 **더블클릭으로 실행**:
+
+```
+📁 WinnerLens/
+  └─ 🚀 start-dev.bat  ← 이 파일을 더블클릭!
+```
+
+또는 PowerShell에서:
+```powershell
+.\start-dev.ps1
+```
+
+#### 자동으로 실행되는 것들:
+- ✅ Docker 컨테이너 시작 (PostgreSQL, Redis)
+- ✅ 환경 변수 확인 및 생성
+- ✅ 의존성 자동 설치
+- ✅ 데이터베이스 마이그레이션
+- ✅ 백엔드 + 프론트엔드 서버 실행
+- ✅ 브라우저 자동 오픈 (http://localhost:3001)
+
+---
+
+### 📖 상세 설치 가이드
+
+처음 설정하거나 문제가 발생한 경우: **[LOCAL_SETUP.md](./LOCAL_SETUP.md)** 참고
+
+### 사전 요구사항
+- ✅ Node.js 18+
+- ✅ Docker Desktop
+- ✅ Git
+
+### 수동 설치 및 실행
+
+<details>
+<summary>클릭하여 펼치기</summary>
 
 1. **저장소 클론**
    ```bash
-   git clone https://github.com/yourusername/winnerlens.git
+   git clone https://github.com/minjae-488/WinnerLens.git
+   cd WinnerLens
    ```
 
-2. **백엔드 설정**
+2. **Docker 시작**
    ```bash
-   cd winnerlens/backend
+   docker-compose up -d
+   ```
+
+3. **백엔드 설정**
+   ```bash
+   cd backend
+   cp .env.example .env
+   # .env 파일에서 OPENAI_API_KEY 설정
    npm install
-   # .env 파일 설정 (DB, JWT, Gemini Key)
+   npx prisma generate
+   npx prisma migrate dev
    npm run dev
    ```
 
-3. **프론트엔드 설정**
+4. **프론트엔드 설정** (새 터미널)
    ```bash
-   cd winnerlens/frontend
+   cd frontend
+   echo "NEXT_PUBLIC_API_URL=http://localhost:3000/api/v1" > .env.local
    npm install
-   # .env.local 파일 설정 (API URL)
    npm run dev
    ```
 
-4. **접속**
+5. **접속**
    - 프론트엔드: http://localhost:3001
    - 백엔드 API: http://localhost:3000
+
+</details>
 
 ---
 
 ## 📚 문서
 
+- [🚀 로컬 실행 가이드](./LOCAL_SETUP.md) ⭐ **처음 시작하시는 분 필독!**
 - [PRD (제품 요구사항 문서)](./prd.md)
 - [기술 명세서](./tech-spec.md)
 - [백엔드 README](./backend/README.md)
