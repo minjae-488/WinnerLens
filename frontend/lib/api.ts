@@ -12,6 +12,8 @@ import {
     CategoryStats,
     TrendData,
     InspectionResult,
+    CoupangRegistrationResult,
+    CoupangProductStatus,
 } from './types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api/v1';
@@ -238,6 +240,7 @@ class ApiClient {
         return response.data!;
     }
 
+
     // ==================== 검수 API ====================
 
     async inspectProduct(productName: string, description?: string): Promise<InspectionResult> {
@@ -245,6 +248,34 @@ class ApiClient {
             method: 'POST',
             headers: this.getHeaders(true),
             body: JSON.stringify({ productName, description }),
+        });
+
+        return response.data!;
+    }
+
+    // ==================== 쿠팡 API ====================
+
+    async registerToCoupang(productId: string): Promise<CoupangRegistrationResult> {
+        const response = await this.request<CoupangRegistrationResult>(`/coupang/register/${productId}`, {
+            method: 'POST',
+            headers: this.getHeaders(true),
+        });
+
+        return response.data!;
+    }
+
+    async getCoupangStatus(productId: string): Promise<CoupangProductStatus> {
+        const response = await this.request<CoupangProductStatus>(`/coupang/status/${productId}`, {
+            headers: this.getHeaders(true),
+        });
+
+        return response.data!;
+    }
+
+    async deleteCoupangProduct(productId: string): Promise<{ success: boolean; message: string }> {
+        const response = await this.request<{ success: boolean; message: string }>(`/coupang/delete/${productId}`, {
+            method: 'DELETE',
+            headers: this.getHeaders(true),
         });
 
         return response.data!;

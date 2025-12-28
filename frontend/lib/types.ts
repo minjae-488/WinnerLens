@@ -150,3 +150,21 @@ export interface InspectionResult {
     score: number;
     issues: InspectionIssue[];
 }
+
+// 쿠팡 등록 관련 타입
+export interface CoupangRegistrationResult {
+    success: boolean;
+    productId?: string;
+    coupangProductId?: string;
+    status: 'pending' | 'approved' | 'rejected' | 'failed';
+    message: string;
+    registeredAt: string;
+}
+
+export interface CoupangProductStatus {
+    productId: string;
+    coupangProductId: string;
+    status: 'pending' | 'approved' | 'rejected' | 'selling' | 'soldout';
+    message: string;
+    updatedAt: string;
+}
