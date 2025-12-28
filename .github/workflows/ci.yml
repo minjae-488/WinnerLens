@@ -71,8 +71,8 @@ jobs:
       if: success()
       run: |
         echo "✅ Frontend build completed successfully!"
-        echo "🌐 Live Demo: https://winnerlens.vercel.app"
-        echo "📊 GitHub Actions: https://github.com/minjae-488/WinnerLens/actions"
+        echo "📦 Build artifacts ready for deployment"
+        echo "📊 GitHub Repository: https://github.com/minjae-488/WinnerLens"
         echo "🐛 Issues: https://github.com/minjae-488/WinnerLens/issues"
 
   build-summary:
@@ -90,10 +90,13 @@ jobs:
         echo "- Frontend: ${{ needs.frontend-build.result }}" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "### 🔗 Quick Links" >> $GITHUB_STEP_SUMMARY
-        echo "- 🌐 [Live Demo](https://winnerlens.vercel.app)" >> $GITHUB_STEP_SUMMARY
+        echo "- 🚀 [Getting Started](https://github.com/minjae-488/WinnerLens#-시작하기-getting-started)" >> $GITHUB_STEP_SUMMARY
         echo "- 📖 [Documentation](https://github.com/minjae-488/WinnerLens/blob/main/README.md)" >> $GITHUB_STEP_SUMMARY
         echo "- 🐛 [Report Issues](https://github.com/minjae-488/WinnerLens/issues)" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
+        echo "💡 **Live Demo Coming Soon!**" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
         echo "---" >> $GITHUB_STEP_SUMMARY
         echo "Built with ❤️ by WinnerLens Team" >> $GITHUB_STEP_SUMMARY
+
 

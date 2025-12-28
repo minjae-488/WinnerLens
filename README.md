@@ -11,7 +11,9 @@
 
 <div align="center">
 
-### 🌐 [Live Demo](https://winnerlens.vercel.app) | 📖 [Documentation](./docs) | 🐛 [Issues](https://github.com/minjae-488/WinnerLens/issues)
+### 🚀 [Getting Started](#-시작하기-getting-started) | 📖 [Documentation](./docs) | 🐛 [Issues](https://github.com/minjae-488/WinnerLens/issues)
+
+**💡 Live Demo Coming Soon!** | 현재 로컬 환경에서 실행 가능합니다.
 
 </div>
 
