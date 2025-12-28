@@ -212,7 +212,7 @@ export default function TrendsPage() {
                         {/* Market Insights */}
                         {trendData.marketInsights && (
                             <AnimatedCard delay={0.4} className="card">
-                                <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
+                                <h2 className="text-xl font-semibold mb-8 flex items-center gap-2">
                                     💡 시장 인사이트
                                 </h2>
                                 <div className="grid grid-cols-2 gap-5">
@@ -259,7 +259,7 @@ export default function TrendsPage() {
                         {/* Competition Analysis */}
                         {trendData.competitionAnalysis && (
                             <AnimatedCard delay={0.5} className="card">
-                                <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
+                                <h2 className="text-xl font-semibold mb-8 flex items-center gap-2">
                                     🏪 경쟁 분석
                                 </h2>
                                 <div className="space-y-4">
@@ -356,7 +356,7 @@ export default function TrendsPage() {
                         {/* Keyword Insights */}
                         {trendData.keywordInsights && (
                             <AnimatedCard delay={0.7} className="card lg:col-span-2">
-                                <h2 className="text-xl font-semibold mb-6">🔍 키워드 인사이트</h2>
+                                <h2 className="text-xl font-semibold mb-8">🔍 키워드 인사이트</h2>
 
                                 {/* Related Keywords */}
                                 <div className="mb-8">
