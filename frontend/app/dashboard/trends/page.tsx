@@ -216,38 +216,38 @@ export default function TrendsPage() {
                                     💡 시장 인사이트
                                 </h2>
                                 <div className="grid grid-cols-2 gap-5">
-                                    <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                                    <div className="p-6 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
                                         <p className="text-sm text-gray-600 dark:text-gray-400">성장률</p>
                                         <p className="text-2xl font-bold text-purple-600 dark:text-purple-400 mt-1">
                                             {trendData.marketInsights.growthRate}
                                         </p>
                                     </div>
-                                    <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                                    <div className="p-6 bg-green-50 dark:bg-green-900/20 rounded-lg">
                                         <p className="text-sm text-gray-600 dark:text-gray-400">수익성</p>
                                         <p className="text-2xl font-bold text-green-600 dark:text-green-400 mt-1">
                                             {trendData.marketInsights.profitability}
                                         </p>
                                     </div>
-                                    <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                                    <div className="p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                                         <p className="text-sm text-gray-600 dark:text-gray-400">시장 규모</p>
                                         <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-1">
                                             {trendData.marketInsights.marketSize}
                                         </p>
                                     </div>
-                                    <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
+                                    <div className="p-6 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
                                         <p className="text-sm text-gray-600 dark:text-gray-400">트렌드</p>
                                         <p className="text-2xl font-bold text-orange-600 dark:text-orange-400 mt-1">
                                             {trendData.marketInsights.trend}
                                         </p>
                                     </div>
                                 </div>
-                                <div className="mt-6 p-5 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                <div className="mt-6 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
                                     <p className="text-sm text-gray-600 dark:text-gray-400">계절성</p>
                                     <p className="text-lg font-semibold text-gray-900 dark:text-white mt-1">
                                         {trendData.marketInsights.seasonality}
                                     </p>
                                 </div>
-                                <div className="mt-6 p-5 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                <div className="mt-6 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
                                     <p className="text-sm text-gray-600 dark:text-gray-400">타겟 연령층</p>
                                     <p className="text-lg font-semibold text-gray-900 dark:text-white mt-1">
                                         {trendData.marketInsights.targetAge}
@@ -263,7 +263,7 @@ export default function TrendsPage() {
                                     🏪 경쟁 분석
                                 </h2>
                                 <div className="space-y-4">
-                                    <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                    <div className="flex items-center justify-between p-5 bg-gray-50 dark:bg-gray-800 rounded-lg">
                                         <div className="flex items-center gap-3">
                                             <Users className="w-5 h-5 text-blue-500" />
                                             <span className="text-gray-700 dark:text-gray-300">판매자 수</span>
@@ -272,7 +272,7 @@ export default function TrendsPage() {
                                             {trendData.competitionAnalysis.sellerCount.toLocaleString()}명
                                         </span>
                                     </div>
-                                    <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                    <div className="flex items-center justify-between p-5 bg-gray-50 dark:bg-gray-800 rounded-lg">
                                         <div className="flex items-center gap-3">
                                             <DollarSign className="w-5 h-5 text-green-500" />
                                             <span className="text-gray-700 dark:text-gray-300">평균 가격</span>
@@ -281,7 +281,7 @@ export default function TrendsPage() {
                                             {trendData.competitionAnalysis.avgPrice.toLocaleString()}원
                                         </span>
                                     </div>
-                                    <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                    <div className="flex items-center justify-between p-5 bg-gray-50 dark:bg-gray-800 rounded-lg">
                                         <div className="flex items-center gap-3">
                                             <CheckCircle className="w-5 h-5 text-yellow-500" />
                                             <span className="text-gray-700 dark:text-gray-300">평균 평점</span>
@@ -290,7 +290,7 @@ export default function TrendsPage() {
                                             ⭐ {trendData.competitionAnalysis.avgRating}
                                         </span>
                                     </div>
-                                    <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                    <div className="flex items-center justify-between p-5 bg-gray-50 dark:bg-gray-800 rounded-lg">
                                         <div className="flex items-center gap-3">
                                             <Clock className="w-5 h-5 text-purple-500" />
                                             <span className="text-gray-700 dark:text-gray-300">재고 회전</span>

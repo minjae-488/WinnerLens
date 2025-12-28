@@ -23,7 +23,7 @@ export const Card: React.FC<CardProps> = ({
                 </div>
             )}
 
-            <div className="p-6">
+            <div className="p-8">
                 {children}
             </div>
 
