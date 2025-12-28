@@ -137,3 +137,16 @@ export interface TrendData {
         topKeyword: string;
     };
 }
+
+export interface InspectionIssue {
+    type: 'error' | 'warning';
+    field: string;
+    message: string;
+    keyword?: string;
+}
+
+export interface InspectionResult {
+    passed: boolean;
+    score: number;
+    issues: InspectionIssue[];
+}

@@ -9,6 +9,9 @@ import { Button } from '@/components/ui/Button';
 import { Loading, Skeleton } from '@/components/ui/Loading';
 import { ProductCard } from '@/components/ProductCard';
 import { Product, CategoryStats } from '@/lib/types';
+import { PageTransition } from '@/components/PageTransition';
+import { AnimatedCard } from '@/components/AnimatedCard';
+import { Package, CheckCircle, BarChart3, Folder, Plus, Package2 } from 'lucide-react';
 
 export default function DashboardPage() {
     const [loading, setLoading] = useState(true);
@@ -44,7 +47,7 @@ export default function DashboardPage() {
         : 0;
 
     return (
-        <div className="space-y-8">
+        <PageTransition className="space-y-8">
             {/* Page Header */}
             <div className="flex justify-between items-center">
                 <div>
@@ -54,8 +57,9 @@ export default function DashboardPage() {
                     </p>
                 </div>
                 <Link href="/dashboard/products/new">
-                    <Button variant="primary" size="lg">
-                        ➕ 상품 추가
+                    <Button variant="primary" size="lg" className="flex items-center gap-2">
+                        <Plus className="w-5 h-5" />
+                        상품 추가
                     </Button>
                 </Link>
             </div>
@@ -71,7 +75,7 @@ export default function DashboardPage() {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <Card hoverable>
+                    <AnimatedCard delay={0} className="card">
                         <div className="flex items-center justify-between">
                             <div>
                                 <p className="text-sm text-gray-600 dark:text-gray-400">전체 상품</p>
@@ -79,11 +83,11 @@ export default function DashboardPage() {
                                     {totalProducts}
                                 </p>
                             </div>
-                            <div className="text-4xl">🛍️</div>
+                            <Package className="w-10 h-10 text-gray-400" />
                         </div>
-                    </Card>
+                    </AnimatedCard>
 
-                    <Card hoverable>
+                    <AnimatedCard delay={0.1} className="card">
                         <div className="flex items-center justify-between">
                             <div>
                                 <p className="text-sm text-gray-600 dark:text-gray-400">등록된 상품</p>
@@ -91,11 +95,11 @@ export default function DashboardPage() {
                                     {totalRegistered}
                                 </p>
                             </div>
-                            <div className="text-4xl">✅</div>
+                            <CheckCircle className="w-10 h-10 text-green-400" />
                         </div>
-                    </Card>
+                    </AnimatedCard>
 
-                    <Card hoverable>
+                    <AnimatedCard delay={0.2} className="card">
                         <div className="flex items-center justify-between">
                             <div>
                                 <p className="text-sm text-gray-600 dark:text-gray-400">평균 스코어</p>
@@ -103,11 +107,11 @@ export default function DashboardPage() {
                                     {avgScore.toFixed(1)}
                                 </p>
                             </div>
-                            <div className="text-4xl">📊</div>
+                            <BarChart3 className="w-10 h-10 text-blue-400" />
                         </div>
-                    </Card>
+                    </AnimatedCard>
 
-                    <Card hoverable>
+                    <AnimatedCard delay={0.3} className="card">
                         <div className="flex items-center justify-between">
                             <div>
                                 <p className="text-sm text-gray-600 dark:text-gray-400">카테고리</p>
@@ -115,9 +119,9 @@ export default function DashboardPage() {
                                     {stats.length}
                                 </p>
                             </div>
-                            <div className="text-4xl">📁</div>
+                            <Folder className="w-10 h-10 text-purple-400" />
                         </div>
-                    </Card>
+                    </AnimatedCard>
                 </div>
             )}
 
@@ -156,9 +160,9 @@ export default function DashboardPage() {
                                         </td>
                                         <td className="py-3 px-4 text-center">
                                             <span className={`font-semibold ${stat.avgScore >= 80 ? 'text-green-600 dark:text-green-400' :
-                                                    stat.avgScore >= 60 ? 'text-blue-600 dark:text-blue-400' :
-                                                        stat.avgScore >= 40 ? 'text-yellow-600 dark:text-yellow-400' :
-                                                            'text-red-600 dark:text-red-400'
+                                                stat.avgScore >= 60 ? 'text-blue-600 dark:text-blue-400' :
+                                                    stat.avgScore >= 40 ? 'text-yellow-600 dark:text-yellow-400' :
+                                                        'text-red-600 dark:text-red-400'
                                                 }`}>
                                                 {stat.avgScore.toFixed(1)}
                                             </span>
@@ -191,7 +195,7 @@ export default function DashboardPage() {
                 ) : products.length === 0 ? (
                     <Card>
                         <div className="text-center py-12">
-                            <div className="text-6xl mb-4">📦</div>
+                            <Package2 className="w-16 h-16 mx-auto mb-4 text-gray-300" />
                             <p className="text-gray-600 dark:text-gray-400 mb-4">
                                 아직 등록된 상품이 없습니다
                             </p>
@@ -208,6 +212,6 @@ export default function DashboardPage() {
                     </div>
                 )}
             </div>
-        </div>
+        </PageTransition>
     );
 }

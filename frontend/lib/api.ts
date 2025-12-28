@@ -11,6 +11,7 @@ import {
     UpdateScoreInput,
     CategoryStats,
     TrendData,
+    InspectionResult,
 } from './types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api/v1';
@@ -232,6 +233,18 @@ class ApiClient {
 
         const response = await this.request<TrendData>(endpoint, {
             headers: this.getHeaders(true),
+        });
+
+        return response.data!;
+    }
+
+    // ==================== 검수 API ====================
+
+    async inspectProduct(productName: string, description?: string): Promise<InspectionResult> {
+        const response = await this.request<InspectionResult>('/inspection/inspect', {
+            method: 'POST',
+            headers: this.getHeaders(true),
+            body: JSON.stringify({ productName, description }),
         });
 
         return response.data!;
