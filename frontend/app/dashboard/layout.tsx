@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/lib/auth.store';
 import { Toaster } from 'react-hot-toast';
+import { LayoutDashboard, Package, TrendingUp, Sparkles, Menu, X, Trophy, LogOut } from 'lucide-react';
 
 export default function DashboardLayout({
     children,
@@ -41,10 +42,10 @@ export default function DashboardLayout({
     }
 
     const menuItems = [
-        { href: '/dashboard', label: '대시보드', icon: '📊' },
-        { href: '/dashboard/products', label: '상품 관리', icon: '🛍️' },
-        { href: '/dashboard/trends', label: '트렌드 분석', icon: '📈' },
-        { href: '/dashboard/ai', label: 'AI 생성', icon: '🤖', disabled: true },
+        { href: '/dashboard', label: '대시보드', icon: LayoutDashboard },
+        { href: '/dashboard/products', label: '상품 관리', icon: Package },
+        { href: '/dashboard/trends', label: '트렌드 분석', icon: TrendingUp },
+        { href: '/dashboard/ai', label: 'AI 생성', icon: Sparkles, disabled: true },
     ];
 
     return (
@@ -57,14 +58,17 @@ export default function DashboardLayout({
                         <div className="flex items-center">
                             <button
                                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                                className="lg:hidden mr-2 p-2 rounded-md text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                                className="lg:hidden mr-2 p-2 rounded-md text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors"
                             >
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                                </svg>
+                                {sidebarOpen ? (
+                                    <X className="w-6 h-6" />
+                                ) : (
+                                    <Menu className="w-6 h-6" />
+                                )}
                             </button>
-                            <Link href="/dashboard" className="text-2xl font-bold gradient-text">
-                                🏆 WinnerLens
+                            <Link href="/dashboard" className="flex items-center gap-2 text-2xl font-bold gradient-text">
+                                <Trophy className="w-7 h-7" />
+                                WinnerLens
                             </Link>
                         </div>
 
@@ -83,8 +87,9 @@ export default function DashboardLayout({
                                     logout();
                                     router.push('/login');
                                 }}
-                                className="btn btn-outline text-sm"
+                                className="btn btn-outline text-sm flex items-center gap-2"
                             >
+                                <LogOut className="w-4 h-4" />
                                 로그아웃
                             </button>
                         </div>
@@ -100,31 +105,34 @@ export default function DashboardLayout({
                     mt-16 lg:mt-0
                 `}>
                     <nav className="p-4 space-y-2">
-                        {menuItems.map((item) => (
-                            <Link
-                                key={item.href}
-                                href={item.disabled ? '#' : item.href}
-                                className={`
-                                    flex items-center gap-3 px-4 py-3 rounded-lg transition-smooth
-                                    ${item.disabled
-                                        ? 'opacity-50 cursor-not-allowed'
-                                        : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
-                                    }
-                                `}
-                                onClick={(e) => {
-                                    if (item.disabled) e.preventDefault();
-                                    setSidebarOpen(false);
-                                }}
-                            >
-                                <span className="text-2xl">{item.icon}</span>
-                                <span className="font-medium">{item.label}</span>
-                                {item.disabled && (
-                                    <span className="ml-auto text-xs bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">
-                                        곧 출시
-                                    </span>
-                                )}
-                            </Link>
-                        ))}
+                        {menuItems.map((item) => {
+                            const IconComponent = item.icon;
+                            return (
+                                <Link
+                                    key={item.href}
+                                    href={item.disabled ? '#' : item.href}
+                                    className={`
+                                        flex items-center gap-3 px-4 py-3 rounded-lg transition-smooth
+                                        ${item.disabled
+                                            ? 'opacity-50 cursor-not-allowed'
+                                            : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
+                                        }
+                                    `}
+                                    onClick={(e) => {
+                                        if (item.disabled) e.preventDefault();
+                                        setSidebarOpen(false);
+                                    }}
+                                >
+                                    <IconComponent className="w-5 h-5" />
+                                    <span className="font-medium">{item.label}</span>
+                                    {item.disabled && (
+                                        <span className="ml-auto text-xs bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">
+                                            곧 출시
+                                        </span>
+                                    )}
+                                </Link>
+                            );
+                        })}
                     </nav>
                 </aside>
 
