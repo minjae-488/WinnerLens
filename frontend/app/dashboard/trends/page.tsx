@@ -39,10 +39,14 @@ export default function TrendsPage() {
     const [loading, setLoading] = useState(true);
     const [trendData, setTrendData] = useState<TrendData | null>(null);
     const [selectedCategory, setSelectedCategory] = useState('전자기기');
+    const [customKeyword, setCustomKeyword] = useState('');
+    const [searchMode, setSearchMode] = useState<'category' | 'keyword'>('category');
 
     useEffect(() => {
-        fetchTrendData();
-    }, [selectedCategory]);
+        if (searchMode === 'category') {
+            fetchTrendData();
+        }
+    }, [selectedCategory, searchMode]);
 
     const fetchTrendData = async () => {
         try {
@@ -54,6 +58,32 @@ export default function TrendsPage() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleKeywordSearch = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!customKeyword.trim()) {
+            showToast.error('키워드를 입력해주세요');
+            return;
+        }
+
+        try {
+            setLoading(true);
+            setSearchMode('keyword');
+            const data = await api.getTrends(customKeyword);
+            setTrendData(data);
+            showToast.success(`"${customKeyword}" 트렌드 분석 완료`);
+        } catch (error: any) {
+            showToast.error(error.message || '트렌드 데이터를 불러오는데 실패했습니다');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleCategoryClick = (category: string) => {
+        setSelectedCategory(category);
+        setSearchMode('category');
+        setCustomKeyword('');
     };
 
     if (loading) {
@@ -103,7 +133,7 @@ export default function TrendsPage() {
                     padding: 20,
                     font: {
                         size: 12,
-                        weight: '500' as const,
+                        weight: 'bold' as const,
                     },
                 },
             },
@@ -113,7 +143,7 @@ export default function TrendsPage() {
                 borderRadius: 8,
                 titleFont: {
                     size: 13,
-                    weight: '600' as const,
+                    weight: 'bold' as const,
                 },
                 bodyFont: {
                     size: 12,
@@ -165,16 +195,30 @@ export default function TrendsPage() {
                 {['전자기기', '패션', '뷰티', '식품', '생활용품'].map((cat) => (
                     <button
                         key={cat}
-                        onClick={() => setSelectedCategory(cat)}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${selectedCategory === cat
-                                ? 'bg-blue-600 text-white shadow-soft'
-                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                        onClick={() => handleCategoryClick(cat)}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${searchMode === 'category' && selectedCategory === cat
+                            ? 'bg-blue-600 text-white shadow-soft'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                             }`}
                     >
                         {cat}
                     </button>
                 ))}
             </div>
+
+            {/* Keyword Search */}
+            <form onSubmit={handleKeywordSearch} className="flex gap-3">
+                <input
+                    type="text"
+                    value={customKeyword}
+                    onChange={(e) => setCustomKeyword(e.target.value)}
+                    placeholder="직접 키워드를 입력하세요 (예: 무선 이어폰, 겨울 패딩)"
+                    className="input flex-1"
+                />
+                <button type="submit" className="btn btn-primary whitespace-nowrap">
+                    트렌드 분석
+                </button>
+            </form>
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
