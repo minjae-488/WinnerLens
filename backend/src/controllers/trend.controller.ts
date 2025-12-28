@@ -231,19 +231,42 @@ export class TrendController {
                 return Math.min(100, Math.floor(base + noise));
             });
 
-            // 급상승 키워드
-            const risingKeywords = relatedQueries?.default?.rankedList?.[0]?.rankedKeyword
-                ?.slice(0, 5)
-                .map((item: any) => ({
+            // 카테고리별 대체 급상승 키워드 (API 데이터 부족 시 사용)
+            const backupRisingKeywords: Record<string, string[]> = {
+                '전자기기': ['블루투스 헤드셋', '스마트워치 스트랩', '미니 가습기', '보조배터리', 'C타입 케이블'],
+                '패션': ['플리스 자켓', '와이드 슬랙스', '니트 베스트', '캐시미어 머플러', '어그 부츠'],
+                '뷰티': ['시카 크림', '티트리 오일', '약산성 클렌저', '톤업 선크림', '비건 쿠션'],
+                '식품': ['제로 콜라', '닭가슴살 칩', '프로틴 쉐이크', '그릭 요거트', '스테비아 토마토'],
+                '생활용품': ['규조토 발매트', '극세사 이불', '캡슐 세제', '섬유 탈취제', '무타공 선반'],
+            };
+
+            // 급상승 키워드 처리 (API 결과가 없으면 백업 키워드 사용)
+            let finalRisingKeywords = [];
+            const apiRisingKeywords = relatedQueries?.default?.rankedList?.[0]?.rankedKeyword;
+
+            if (apiRisingKeywords && apiRisingKeywords.length > 0) {
+                finalRisingKeywords = apiRisingKeywords.slice(0, 5).map((item: any) => ({
                     keyword: item.query,
                     growth: item.value,
                     searchVolume: Math.floor(avgSearchVolume * (item.value / 100)),
-                })) || [];
+                }));
+            } else {
+                // API 결과가 없으면 해당 카테고리의 백업 키워드 사용
+                const backups = backupRisingKeywords[category as string] || backupRisingKeywords['전자기기'];
+                finalRisingKeywords = backups.map((k) => ({
+                    keyword: k,
+                    growth: 100 + Math.floor(Math.random() * 900), // 100% ~ 1000% 성장
+                    searchVolume: Math.floor(avgSearchVolume * (0.5 + Math.random())),
+                }));
+            }
+
+            const risingKeywords = finalRisingKeywords;
 
             // 연관 검색어
             const relatedKeywordsList = relatedQueries?.default?.rankedList?.[1]?.rankedKeyword
                 ?.slice(0, 5)
-                .map((item: any) => item.query) || [];
+                .map((item: any) => item.query) ||
+                (backupRisingKeywords[category as string] || backupRisingKeywords['전자기기']);
 
             // 지역별 데이터
             const regionalData = regionData?.default?.geoMapData || [];
