@@ -89,8 +89,8 @@ export default function DashboardPage() {
                                 </p>
                             </div>
                             <div className="ml-4">
-                                <div className="p-3 bg-gray-100 dark:bg-gray-700 rounded-xl group-hover:bg-gray-200 dark:group-hover:bg-gray-600 transition-colors">
-                                    <Package className="w-8 h-8 text-gray-600 dark:text-gray-300" />
+                                <div className="p-2.5 bg-gray-50 dark:bg-gray-700/50 rounded-lg group-hover:bg-gray-100 dark:group-hover:bg-gray-600/50 transition-colors">
+                                    <Package className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                                 </div>
                             </div>
                         </div>
@@ -110,8 +110,8 @@ export default function DashboardPage() {
                                 </p>
                             </div>
                             <div className="ml-4">
-                                <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl group-hover:bg-green-200 dark:group-hover:bg-green-900/50 transition-colors">
-                                    <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
+                                <div className="p-2.5 bg-green-50 dark:bg-green-900/20 rounded-lg group-hover:bg-green-100 dark:group-hover:bg-green-900/30 transition-colors">
+                                    <CheckCircle className="w-6 h-6 text-green-500 dark:text-green-400" />
                                 </div>
                             </div>
                         </div>
@@ -131,8 +131,8 @@ export default function DashboardPage() {
                                 </p>
                             </div>
                             <div className="ml-4">
-                                <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-colors">
-                                    <BarChart3 className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                                <div className="p-2.5 bg-blue-50 dark:bg-blue-900/20 rounded-lg group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30 transition-colors">
+                                    <BarChart3 className="w-6 h-6 text-blue-500 dark:text-blue-400" />
                                 </div>
                             </div>
                         </div>
@@ -152,8 +152,8 @@ export default function DashboardPage() {
                                 </p>
                             </div>
                             <div className="ml-4">
-                                <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl group-hover:bg-purple-200 dark:group-hover:bg-purple-900/50 transition-colors">
-                                    <Folder className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+                                <div className="p-2.5 bg-purple-50 dark:bg-purple-900/20 rounded-lg group-hover:bg-purple-100 dark:group-hover:bg-purple-900/30 transition-colors">
+                                    <Folder className="w-6 h-6 text-purple-500 dark:text-purple-400" />
                                 </div>
                             </div>
                         </div>

@@ -191,9 +191,15 @@ body {
   }
 
   .card {
-    @apply bg-white dark:bg-gray-800 rounded-xl shadow-lg;
-    @apply border border-gray-200 dark:border-gray-700;
-    @apply transition-smooth hover:shadow-xl;
+    @apply bg-white dark:bg-gray-800 rounded-xl;
+    @apply border border-gray-100 dark:border-gray-700;
+    @apply transition-all duration-300;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  }
+
+  .card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+    transform: translateY(-2px);
   }
 
   .badge {
