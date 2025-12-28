@@ -60,6 +60,7 @@ model Product {
   // 상태
   status            String @default("draft") // draft, pending, registered, rejected
   coupangProductId  String?
+  registeredAt      DateTime? // 쿠팡 등록 일시
   
   // 관계
   registrations Registration[]
