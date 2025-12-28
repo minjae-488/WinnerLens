@@ -7,12 +7,14 @@ import { showToast } from '@/lib/toast';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { CreateProductInput } from '@/lib/types';
+import { CreateProductInput, InspectionResult } from '@/lib/types';
 import { AiGeneratorModal } from '@/components/AiGeneratorModal';
+import { InspectionResultCard } from '@/components/InspectionResultCard';
 
 export default function NewProductPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const [inspecting, setInspecting] = useState(false);
     const [formData, setFormData] = useState<CreateProductInput>({
         productName: '',
         category: '',
@@ -26,6 +28,7 @@ export default function NewProductPage() {
         isOpen: false,
         type: 'name',
     });
+    const [inspectionResult, setInspectionResult] = useState<InspectionResult | null>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -37,6 +40,11 @@ export default function NewProductPage() {
         // Clear error when user types
         if (errors[name as keyof CreateProductInput]) {
             setErrors(prev => ({ ...prev, [name]: '' }));
+        }
+
+        // Reset inspection result on change
+        if (inspectionResult && (name === 'productName' || name === 'description')) {
+            setInspectionResult(null);
         }
     };
 
@@ -57,6 +65,27 @@ export default function NewProductPage() {
             setFormData(prev => ({ ...prev, productName: value }));
         } else {
             setFormData(prev => ({ ...prev, description: value }));
+        }
+    };
+
+    const handleInspect = async () => {
+        if (!formData.productName) {
+            showToast.error('검수할 상품명을 입력해주세요');
+            return;
+        }
+        try {
+            setInspecting(true);
+            const result = await api.inspectProduct(formData.productName, formData.description);
+            setInspectionResult(result);
+            if (result.passed) {
+                showToast.success('검수에 통과했습니다!');
+            } else {
+                showToast.error('검수 결과 위반 사항이 발견되었습니다.');
+            }
+        } catch (error: any) {
+            showToast.error(error.message || '검수 중 오류가 발생했습니다.');
+        } finally {
+            setInspecting(false);
         }
     };
 
@@ -94,6 +123,13 @@ export default function NewProductPage() {
             return;
         }
 
+        // 검수 통과 여부 확인 (선택 사항이지만 안전을 위해)
+        if (inspectionResult && !inspectionResult.passed) {
+            if (!confirm('검수에 통과하지 못한 항목이 있습니다. 그래도 생성하시겠습니까?')) {
+                return;
+            }
+        }
+
         try {
             setLoading(true);
             const product = await api.createProduct(formData);
@@ -116,145 +152,166 @@ export default function NewProductPage() {
                 </p>
             </div>
 
-            {/* Form */}
-            <Card>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div>
-                        <Input
-                            label="상품명 *"
-                            type="text"
-                            name="productName"
-                            value={formData.productName}
-                            onChange={handleChange}
-                            error={errors.productName}
-                            placeholder="예: 무선 블루투스 이어폰"
-                            required
-                        />
-                        <div className="flex justify-end mt-2">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => openAiModal('name')}
-                                className="text-xs"
-                            >
-                                ✨ AI 상품명 생성
-                            </Button>
-                        </div>
-                    </div>
+            <div className="flex flex-col lg:flex-row gap-6">
+                {/* Form */}
+                <div className="flex-1 space-y-6">
+                    <Card>
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div>
+                                <Input
+                                    label="상품명 *"
+                                    type="text"
+                                    name="productName"
+                                    value={formData.productName}
+                                    onChange={handleChange}
+                                    error={errors.productName}
+                                    placeholder="예: 무선 블루투스 이어폰"
+                                    required
+                                />
+                                <div className="flex justify-end mt-2">
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => openAiModal('name')}
+                                        className="text-xs"
+                                    >
+                                        ✨ AI 상품명 생성
+                                    </Button>
+                                </div>
+                            </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            카테고리 *
-                        </label>
-                        <select
-                            name="category"
-                            value={formData.category}
-                            onChange={handleChange}
-                            className={`input ${errors.category ? 'border-red-500' : ''}`}
-                            required
-                        >
-                            <option value="">카테고리 선택</option>
-                            <option value="전자기기">전자기기</option>
-                            <option value="패션">패션</option>
-                            <option value="뷰티">뷰티</option>
-                            <option value="식품">식품</option>
-                            <option value="생활용품">생활용품</option>
-                            <option value="기타">기타</option>
-                        </select>
-                        {errors.category && (
-                            <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                                {errors.category}
-                            </p>
-                        )}
-                    </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                    카테고리 *
+                                </label>
+                                <select
+                                    name="category"
+                                    value={formData.category}
+                                    onChange={handleChange}
+                                    className={`input ${errors.category ? 'border-red-500' : ''}`}
+                                    required
+                                >
+                                    <option value="">카테고리 선택</option>
+                                    <option value="전자기기">전자기기</option>
+                                    <option value="패션">패션</option>
+                                    <option value="뷰티">뷰티</option>
+                                    <option value="식품">식품</option>
+                                    <option value="생활용품">생활용품</option>
+                                    <option value="기타">기타</option>
+                                </select>
+                                {errors.category && (
+                                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                                        {errors.category}
+                                    </p>
+                                )}
+                            </div>
 
-                    <div>
-                        <div className="flex justify-between items-center mb-1">
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                상품 설명
-                            </label>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => openAiModal('description')}
-                                className="text-xs"
-                            >
-                                ✨ AI 상세설명 생성
-                            </Button>
-                        </div>
-                        <textarea
-                            name="description"
-                            value={formData.description}
-                            onChange={handleChange}
-                            rows={4}
-                            className="input"
-                            placeholder="상품에 대한 상세한 설명을 입력하세요"
-                        />
-                    </div>
+                            <div>
+                                <div className="flex justify-between items-center mb-1">
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        상품 설명
+                                    </label>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => openAiModal('description')}
+                                        className="text-xs"
+                                    >
+                                        ✨ AI 상세설명 생성
+                                    </Button>
+                                </div>
+                                <textarea
+                                    name="description"
+                                    value={formData.description}
+                                    onChange={handleChange}
+                                    rows={4}
+                                    className="input"
+                                    placeholder="상품에 대한 상세한 설명을 입력하세요"
+                                />
+                            </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <Input
-                            label="판매가 (원) *"
-                            type="number"
-                            name="price"
-                            value={formData.price}
-                            onChange={handleChange}
-                            error={errors.price}
-                            min="0"
-                            step="100"
-                            placeholder="20000"
-                            required
-                        />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <Input
+                                    label="판매가 (원) *"
+                                    type="number"
+                                    name="price"
+                                    value={formData.price}
+                                    onChange={handleChange}
+                                    error={errors.price}
+                                    min="0"
+                                    step="100"
+                                    placeholder="20000"
+                                    required
+                                />
 
-                        <Input
-                            label="원가 (원)"
-                            type="number"
-                            name="cost"
-                            value={formData.cost}
-                            onChange={handleChange}
-                            error={errors.cost}
-                            min="0"
-                            step="100"
-                            placeholder="15000"
-                            helperText="원가를 입력하면 마진율이 자동으로 계산됩니다"
-                        />
-                    </div>
+                                <Input
+                                    label="원가 (원)"
+                                    type="number"
+                                    name="cost"
+                                    value={formData.cost}
+                                    onChange={handleChange}
+                                    error={errors.cost}
+                                    min="0"
+                                    step="100"
+                                    placeholder="15000"
+                                    helperText="원가를 입력하면 마진율이 자동으로 계산됩니다"
+                                />
+                            </div>
 
-                    {/* Margin Preview */}
-                    {formData.price > 0 && formData.cost && formData.cost > 0 && formData.cost < formData.price && (
-                        <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-                            <p className="text-sm text-green-800 dark:text-green-200">
-                                예상 마진율: <span className="font-bold text-lg">
-                                    {(((formData.price - formData.cost) / formData.price) * 100).toFixed(1)}%
-                                </span>
-                            </p>
-                        </div>
-                    )}
+                            {/* Margin Preview */}
+                            {formData.price > 0 && formData.cost && formData.cost > 0 && formData.cost < formData.price && (
+                                <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                                    <p className="text-sm text-green-800 dark:text-green-200">
+                                        예상 마진율: <span className="font-bold text-lg">
+                                            {(((formData.price - formData.cost) / formData.price) * 100).toFixed(1)}%
+                                        </span>
+                                    </p>
+                                </div>
+                            )}
 
-                    {/* Actions */}
-                    <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-                        <Button
-                            type="button"
-                            variant="secondary"
-                            onClick={() => router.back()}
-                            disabled={loading}
-                            className="flex-1"
-                        >
-                            취소
-                        </Button>
-                        <Button
-                            type="submit"
-                            variant="primary"
-                            isLoading={loading}
-                            className="flex-1"
-                        >
-                            상품 생성
-                        </Button>
-                    </div>
-                </form>
-            </Card>
+                            {/* Actions */}
+                            <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                <Button
+                                    type="button"
+                                    variant="secondary"
+                                    onClick={() => router.back()}
+                                    disabled={loading}
+                                    className="flex-1"
+                                >
+                                    취소
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={handleInspect}
+                                    disabled={loading || inspecting || !formData.productName}
+                                    className="flex-1 border-blue-200 text-blue-700 hover:bg-blue-50"
+                                >
+                                    {inspecting ? '검수 중...' : '🔍 등록 전 검수'}
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    variant="primary"
+                                    isLoading={loading}
+                                    className="flex-1"
+                                >
+                                    상품 생성
+                                </Button>
+                            </div>
+                        </form>
+                    </Card>
+                </div>
+
+                {/* Inspection Result Sidebar (Desktop) or Bottom (Mobile) */}
+                <div className="w-full lg:w-96">
+                    <InspectionResultCard
+                        result={inspectionResult}
+                        loading={inspecting}
+                    />
+                </div>
+            </div>
 
             <AiGeneratorModal
                 isOpen={aiModal.isOpen}
@@ -264,6 +321,6 @@ export default function NewProductPage() {
                 category={formData.category}
                 productName={formData.productName}
             />
-        </div >
+        </div>
     );
 }
