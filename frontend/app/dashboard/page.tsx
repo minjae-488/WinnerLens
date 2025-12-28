@@ -66,60 +66,96 @@ export default function DashboardPage() {
 
             {/* Stats Cards */}
             {loading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {[1, 2, 3, 4].map((i) => (
                         <Card key={i}>
-                            <Skeleton className="h-20" />
+                            <Skeleton className="h-28" />
                         </Card>
                     ))}
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <AnimatedCard delay={0} className="card">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">전체 상품</p>
-                                <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <AnimatedCard delay={0} className="card group cursor-pointer">
+                        <div className="flex items-center justify-between p-6">
+                            <div className="flex-1">
+                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
+                                    전체 상품
+                                </p>
+                                <p className="text-4xl font-bold text-gray-900 dark:text-white">
                                     {totalProducts}
                                 </p>
+                                <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+                                    총 등록된 상품 수
+                                </p>
                             </div>
-                            <Package className="w-10 h-10 text-gray-400" />
+                            <div className="ml-4">
+                                <div className="p-3 bg-gray-100 dark:bg-gray-700 rounded-xl group-hover:bg-gray-200 dark:group-hover:bg-gray-600 transition-colors">
+                                    <Package className="w-8 h-8 text-gray-600 dark:text-gray-300" />
+                                </div>
+                            </div>
                         </div>
                     </AnimatedCard>
 
-                    <AnimatedCard delay={0.1} className="card">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">등록된 상품</p>
-                                <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-1">
+                    <AnimatedCard delay={0.1} className="card group cursor-pointer">
+                        <div className="flex items-center justify-between p-6">
+                            <div className="flex-1">
+                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
+                                    등록된 상품
+                                </p>
+                                <p className="text-4xl font-bold text-green-600 dark:text-green-400">
                                     {totalRegistered}
                                 </p>
+                                <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+                                    쿠팡 등록 완료
+                                </p>
                             </div>
-                            <CheckCircle className="w-10 h-10 text-green-400" />
+                            <div className="ml-4">
+                                <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl group-hover:bg-green-200 dark:group-hover:bg-green-900/50 transition-colors">
+                                    <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
+                                </div>
+                            </div>
                         </div>
                     </AnimatedCard>
 
-                    <AnimatedCard delay={0.2} className="card">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">평균 스코어</p>
-                                <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-1">
+                    <AnimatedCard delay={0.2} className="card group cursor-pointer">
+                        <div className="flex items-center justify-between p-6">
+                            <div className="flex-1">
+                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
+                                    평균 스코어
+                                </p>
+                                <p className="text-4xl font-bold text-blue-600 dark:text-blue-400">
                                     {avgScore.toFixed(1)}
                                 </p>
+                                <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+                                    종합 평가 점수
+                                </p>
                             </div>
-                            <BarChart3 className="w-10 h-10 text-blue-400" />
+                            <div className="ml-4">
+                                <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-colors">
+                                    <BarChart3 className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                                </div>
+                            </div>
                         </div>
                     </AnimatedCard>
 
-                    <AnimatedCard delay={0.3} className="card">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">카테고리</p>
-                                <p className="text-3xl font-bold text-purple-600 dark:text-purple-400 mt-1">
+                    <AnimatedCard delay={0.3} className="card group cursor-pointer">
+                        <div className="flex items-center justify-between p-6">
+                            <div className="flex-1">
+                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
+                                    카테고리
+                                </p>
+                                <p className="text-4xl font-bold text-purple-600 dark:text-purple-400">
                                     {stats.length}
                                 </p>
+                                <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+                                    활성 카테고리 수
+                                </p>
                             </div>
-                            <Folder className="w-10 h-10 text-purple-400" />
+                            <div className="ml-4">
+                                <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl group-hover:bg-purple-200 dark:group-hover:bg-purple-900/50 transition-colors">
+                                    <Folder className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+                                </div>
+                            </div>
                         </div>
                     </AnimatedCard>
                 </div>
