@@ -1,253 +1,261 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { api } from '@/lib/api';
+import { Product } from '@/lib/types';
 import { showToast } from '@/lib/toast';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Loading, Skeleton } from '@/components/ui/Loading';
-import { ProductCard } from '@/components/ProductCard';
-import { Product, CategoryStats } from '@/lib/types';
-import { PageTransition } from '@/components/PageTransition';
 import { AnimatedCard } from '@/components/AnimatedCard';
-import { Package, CheckCircle, BarChart3, Folder, Plus, Package2 } from 'lucide-react';
+import { Loading } from '@/components/ui/Loading';
+import { Package, CheckCircle, BarChart3, TrendingUp, Plus, ArrowRight, Sparkles } from 'lucide-react';
+
+interface DashboardStats {
+    totalProducts: number;
+    totalRegistered: number;
+    averageScore: number;
+    totalCategories: number;
+}
+
+interface CategoryStat {
+    category: string;
+    count: number;
+    avgScore: number;
+}
 
 export default function DashboardPage() {
+    const router = useRouter();
     const [loading, setLoading] = useState(true);
-    const [products, setProducts] = useState<Product[]>([]);
-    const [stats, setStats] = useState<CategoryStats[]>([]);
+    const [stats, setStats] = useState<DashboardStats>({
+        totalProducts: 0,
+        totalRegistered: 0,
+        averageScore: 0,
+        totalCategories: 0,
+    });
+    const [recentProducts, setRecentProducts] = useState<Product[]>([]);
+    const [categoryStats, setCategoryStats] = useState<CategoryStat[]>([]);
 
     useEffect(() => {
-        loadDashboardData();
+        fetchDashboardData();
     }, []);
 
-    const loadDashboardData = async () => {
+    const fetchDashboardData = async () => {
         try {
             setLoading(true);
+            const products = await api.getProducts({ limit: 5, sortBy: 'createdAt', sortOrder: 'desc' });
+            setRecentProducts(products?.data || []);
 
-            // Load recent products
-            const productsData = await api.getProducts({ limit: 6, sortBy: 'createdAt', sortOrder: 'desc' });
-            setProducts(productsData.data);
+            const allProducts = await api.getProducts({ limit: 1000 });
+            const productsList = allProducts?.data || [];
+            const totalProducts = productsList.length;
+            const totalRegistered = productsList.filter((p: Product) => p.status === 'registered').length;
+            const avgScore = totalProducts > 0
+                ? productsList.reduce((sum: number, p: Product) => sum + (p.totalScore || 0), 0) / totalProducts
+                : 0;
 
-            // Load category stats
-            const statsData = await api.getCategoryStats();
-            setStats(statsData);
+            const categoryMap = new Map<string, { count: number; totalScore: number }>();
+            productsList.forEach((p: Product) => {
+                const existing = categoryMap.get(p.category) || { count: 0, totalScore: 0 };
+                categoryMap.set(p.category, {
+                    count: existing.count + 1,
+                    totalScore: existing.totalScore + (p.totalScore || 0),
+                });
+            });
+
+            const categoryStatsData: CategoryStat[] = Array.from(categoryMap.entries()).map(([category, data]) => ({
+                category,
+                count: data.count,
+                avgScore: data.count > 0 ? data.totalScore / data.count : 0,
+            }));
+
+            setStats({
+                totalProducts,
+                totalRegistered,
+                averageScore: avgScore,
+                totalCategories: categoryStatsData.length,
+            });
+            setCategoryStats(categoryStatsData);
         } catch (error: any) {
-            showToast.error(error.message || '데이터를 불러오는데 실패했습니다');
+            console.error('Dashboard data fetch error:', error);
+            showToast.error(error.message || '대시보드 데이터를 불러오는데 실패했습니다');
         } finally {
             setLoading(false);
         }
     };
 
-    const totalProducts = stats.reduce((sum, s) => sum + s.total, 0);
-    const totalRegistered = stats.reduce((sum, s) => sum + s.registered, 0);
-    const avgScore = stats.length > 0
-        ? stats.reduce((sum, s) => sum + (s.avgScore * s.total), 0) / totalProducts
-        : 0;
+    const { totalProducts, totalRegistered, averageScore, totalCategories } = stats;
 
     return (
-        <PageTransition className="space-y-8">
-            {/* Page Header */}
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">대시보드</h1>
-                    <p className="text-gray-600 dark:text-gray-400 mt-1">
-                        WinnerLens에 오신 것을 환영합니다
+        <div className="space-y-8">
+            {/* Hero Section - Modern Minimal */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div className="space-y-2">
+                    <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
+                        대시보드
+                    </h1>
+                    <p className="text-lg text-gray-500 dark:text-gray-400">
+                        AI 기반 쿠팡 셀러 자동화 시스템
                     </p>
                 </div>
                 <Link href="/dashboard/products/new">
-                    <Button variant="primary" size="lg" className="flex items-center gap-2">
+                    <button className="btn btn-primary group">
                         <Plus className="w-5 h-5" />
                         상품 추가
-                    </Button>
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </button>
                 </Link>
             </div>
 
-            {/* Stats Cards */}
             {loading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {[1, 2, 3, 4].map((i) => (
-                        <Card key={i}>
-                            <Skeleton className="h-28" />
-                        </Card>
-                    ))}
+                <div className="flex justify-center py-20">
+                    <Loading size="lg" />
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <AnimatedCard delay={0} className="card group cursor-pointer">
-                        <div className="flex items-center justify-between p-6">
-                            <div className="flex-1">
-                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                                    전체 상품
-                                </p>
-                                <p className="text-4xl font-bold text-gray-900 dark:text-white">
-                                    {totalProducts}
-                                </p>
-                                <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
-                                    총 등록된 상품 수
-                                </p>
-                            </div>
-                            <div className="ml-4">
-                                <div className="p-2.5 bg-gray-50 dark:bg-gray-700/50 rounded-lg group-hover:bg-gray-100 dark:group-hover:bg-gray-600/50 transition-colors">
-                                    <Package className="w-6 h-6 text-gray-500 dark:text-gray-400" />
+                <>
+                    {/* Stats Grid - Modern Minimal */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <AnimatedCard delay={0} className="metric-card group">
+                            <div className="flex items-start justify-between mb-4">
+                                <div className="p-2.5 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                                    <Package className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                                 </div>
+                                <span className="text-xs font-medium text-gray-400">전체</span>
                             </div>
-                        </div>
-                    </AnimatedCard>
+                            <div className="space-y-1">
+                                <p className="stat-number">{totalProducts}</p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">등록된 상품</p>
+                            </div>
+                        </AnimatedCard>
 
-                    <AnimatedCard delay={0.1} className="card group cursor-pointer">
-                        <div className="flex items-center justify-between p-6">
-                            <div className="flex-1">
-                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                                    등록된 상품
-                                </p>
-                                <p className="text-4xl font-bold text-green-600 dark:text-green-400">
-                                    {totalRegistered}
-                                </p>
-                                <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
-                                    쿠팡 등록 완료
-                                </p>
-                            </div>
-                            <div className="ml-4">
-                                <div className="p-2.5 bg-green-50 dark:bg-green-900/20 rounded-lg group-hover:bg-green-100 dark:group-hover:bg-green-900/30 transition-colors">
-                                    <CheckCircle className="w-6 h-6 text-green-500 dark:text-green-400" />
+                        <AnimatedCard delay={0.1} className="metric-card group">
+                            <div className="flex items-start justify-between mb-4">
+                                <div className="p-2.5 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                                    <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
                                 </div>
+                                <span className="text-xs font-medium text-green-500">활성</span>
                             </div>
-                        </div>
-                    </AnimatedCard>
+                            <div className="space-y-1">
+                                <p className="stat-number text-green-600 dark:text-green-400">{totalRegistered}</p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">쿠팡 등록</p>
+                            </div>
+                        </AnimatedCard>
 
-                    <AnimatedCard delay={0.2} className="card group cursor-pointer">
-                        <div className="flex items-center justify-between p-6">
-                            <div className="flex-1">
-                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                                    평균 스코어
-                                </p>
-                                <p className="text-4xl font-bold text-blue-600 dark:text-blue-400">
-                                    {avgScore.toFixed(1)}
-                                </p>
-                                <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
-                                    종합 평가 점수
-                                </p>
-                            </div>
-                            <div className="ml-4">
-                                <div className="p-2.5 bg-blue-50 dark:bg-blue-900/20 rounded-lg group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30 transition-colors">
-                                    <BarChart3 className="w-6 h-6 text-blue-500 dark:text-blue-400" />
+                        <AnimatedCard delay={0.2} className="metric-card group">
+                            <div className="flex items-start justify-between mb-4">
+                                <div className="p-2.5 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                                    <BarChart3 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                                 </div>
+                                <span className="text-xs font-medium text-blue-500">평균</span>
                             </div>
-                        </div>
-                    </AnimatedCard>
+                            <div className="space-y-1">
+                                <p className="stat-number text-blue-600 dark:text-blue-400">{averageScore.toFixed(1)}</p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">품질 점수</p>
+                            </div>
+                        </AnimatedCard>
 
-                    <AnimatedCard delay={0.3} className="card group cursor-pointer">
-                        <div className="flex items-center justify-between p-6">
-                            <div className="flex-1">
-                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                                    카테고리
-                                </p>
-                                <p className="text-4xl font-bold text-purple-600 dark:text-purple-400">
-                                    {stats.length}
-                                </p>
-                                <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
-                                    활성 카테고리 수
-                                </p>
-                            </div>
-                            <div className="ml-4">
-                                <div className="p-2.5 bg-purple-50 dark:bg-purple-900/20 rounded-lg group-hover:bg-purple-100 dark:group-hover:bg-purple-900/30 transition-colors">
-                                    <Folder className="w-6 h-6 text-purple-500 dark:text-purple-400" />
+                        <AnimatedCard delay={0.3} className="metric-card group">
+                            <div className="flex items-start justify-between mb-4">
+                                <div className="p-2.5 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                                    <TrendingUp className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                                 </div>
+                                <span className="text-xs font-medium text-purple-500">카테고리</span>
                             </div>
-                        </div>
-                    </AnimatedCard>
-                </div>
-            )}
-
-            {/* Category Stats */}
-            {!loading && stats.length > 0 && (
-                <Card header={<h2 className="text-xl font-semibold">카테고리별 통계</h2>}>
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead>
-                                <tr className="border-b border-gray-200 dark:border-gray-700">
-                                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-700 dark:text-gray-300">
-                                        카테고리
-                                    </th>
-                                    <th className="text-center py-3 px-4 text-sm font-medium text-gray-700 dark:text-gray-300">
-                                        전체
-                                    </th>
-                                    <th className="text-center py-3 px-4 text-sm font-medium text-gray-700 dark:text-gray-300">
-                                        등록됨
-                                    </th>
-                                    <th className="text-center py-3 px-4 text-sm font-medium text-gray-700 dark:text-gray-300">
-                                        평균 스코어
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {stats.map((stat) => (
-                                    <tr key={stat.category} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                                        <td className="py-3 px-4 font-medium text-gray-900 dark:text-white">
-                                            {stat.category}
-                                        </td>
-                                        <td className="py-3 px-4 text-center text-gray-700 dark:text-gray-300">
-                                            {stat.total}
-                                        </td>
-                                        <td className="py-3 px-4 text-center text-green-600 dark:text-green-400 font-medium">
-                                            {stat.registered}
-                                        </td>
-                                        <td className="py-3 px-4 text-center">
-                                            <span className={`font-semibold ${stat.avgScore >= 80 ? 'text-green-600 dark:text-green-400' :
-                                                stat.avgScore >= 60 ? 'text-blue-600 dark:text-blue-400' :
-                                                    stat.avgScore >= 40 ? 'text-yellow-600 dark:text-yellow-400' :
-                                                        'text-red-600 dark:text-red-400'
-                                                }`}>
-                                                {stat.avgScore.toFixed(1)}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                            <div className="space-y-1">
+                                <p className="stat-number text-purple-600 dark:text-purple-400">{totalCategories}</p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">활성 카테고리</p>
+                            </div>
+                        </AnimatedCard>
                     </div>
-                </Card>
-            )}
 
-            {/* Recent Products */}
-            <div>
-                <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">최근 상품</h2>
-                    <Link href="/dashboard/products">
-                        <Button variant="outline">전체 보기 →</Button>
-                    </Link>
-                </div>
-
-                {loading ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {[1, 2, 3].map((i) => (
-                            <Card key={i}>
-                                <Skeleton className="h-48" />
-                            </Card>
-                        ))}
-                    </div>
-                ) : products.length === 0 ? (
-                    <Card>
-                        <div className="text-center py-12">
-                            <Package2 className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-                            <p className="text-gray-600 dark:text-gray-400 mb-4">
-                                아직 등록된 상품이 없습니다
-                            </p>
-                            <Link href="/dashboard/products/new">
-                                <Button variant="primary">첫 상품 추가하기</Button>
+                    {/* Recent Products - Modern Minimal */}
+                    <AnimatedCard delay={0.4} className="card p-8">
+                        <div className="flex items-center justify-between mb-6">
+                            <div>
+                                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">최근 상품</h2>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">최근 등록된 상품 목록</p>
+                            </div>
+                            <Link href="/dashboard/products">
+                                <button className="btn btn-outline text-sm">
+                                    전체 보기
+                                    <ArrowRight className="w-4 h-4" />
+                                </button>
                             </Link>
                         </div>
-                    </Card>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {products.map((product) => (
-                            <ProductCard key={product.id} product={product} />
-                        ))}
-                    </div>
-                )}
-            </div>
-        </PageTransition>
+
+                        <div className="space-y-3">
+                            {recentProducts.length === 0 ? (
+                                <div className="text-center py-12">
+                                    <Sparkles className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                                    <p className="text-gray-500 dark:text-gray-400">아직 등록된 상품이 없습니다</p>
+                                    <Link href="/dashboard/products/new">
+                                        <button className="btn btn-primary mt-4">
+                                            <Plus className="w-4 h-4" />
+                                            첫 상품 추가하기
+                                        </button>
+                                    </Link>
+                                </div>
+                            ) : (
+                                recentProducts.map((product, index) => (
+                                    <div
+                                        key={product.id}
+                                        onClick={() => router.push(`/dashboard/products/${product.id}`)}
+                                        className="group p-4 rounded-xl border border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700 transition-all cursor-pointer hover:shadow-soft"
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex-1 min-w-0">
+                                                <h3 className="font-medium text-gray-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                                    {product.productName}
+                                                </h3>
+                                                <div className="flex items-center gap-3 mt-2">
+                                                    <span className="badge badge-info">{product.category}</span>
+                                                    {product.totalScore && (
+                                                        <span className="text-sm text-gray-500 dark:text-gray-400">
+                                                            점수: {product.totalScore}
+                                                        </span>
+                                                    )}
+                                                    {product.status === 'registered' && (
+                                                        <span className="badge badge-success">쿠팡 등록</span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-1 transition-all flex-shrink-0 ml-4" />
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </AnimatedCard>
+
+                    {/* Category Stats - Modern Minimal */}
+                    {categoryStats.length > 0 && (
+                        <AnimatedCard delay={0.5} className="card p-8">
+                            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">카테고리별 통계</h2>
+                            <div className="space-y-4">
+                                {categoryStats.map((stat, index) => (
+                                    <div key={stat.category} className="flex items-center gap-4">
+                                        <div className="flex-1">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                                    {stat.category}
+                                                </span>
+                                                <span className="text-sm text-gray-500 dark:text-gray-400">
+                                                    {stat.count}개 · 평균 {stat.avgScore.toFixed(1)}점
+                                                </span>
+                                            </div>
+                                            <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2">
+                                                <div
+                                                    className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-500"
+                                                    style={{ width: `${(stat.count / totalProducts) * 100}%` }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </AnimatedCard>
+                    )}
+                </>
+            )}
+        </div>
     );
 }
