@@ -359,11 +359,11 @@ export default function TrendsPage() {
                                 <h2 className="text-xl font-semibold mb-6">🔍 키워드 인사이트</h2>
 
                                 {/* Related Keywords */}
-                                <div className="mb-6">
-                                    <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">연관 검색어</h3>
-                                    <div className="flex flex-wrap gap-2">
+                                <div className="mb-8">
+                                    <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">연관 검색어</h3>
+                                    <div className="flex flex-wrap gap-3">
                                         {trendData.keywordInsights.relatedKeywords.map((kw, idx) => (
-                                            <span key={idx} className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm">
+                                            <span key={idx} className="px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium">
                                                 {kw}
                                             </span>
                                         ))}
@@ -371,9 +371,9 @@ export default function TrendsPage() {
                                 </div>
 
                                 {/* Search Intent */}
-                                <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                                    <p className="text-sm text-gray-600 dark:text-gray-400">검색 의도</p>
-                                    <p className="text-lg font-bold text-green-600 dark:text-green-400 mt-1">
+                                <div className="mb-8 p-5 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">검색 의도</p>
+                                    <p className="text-lg font-bold text-green-600 dark:text-green-400">
                                         {trendData.keywordInsights.searchIntent}
                                     </p>
                                 </div>
@@ -381,13 +381,13 @@ export default function TrendsPage() {
                                 {/* Charts */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
-                                        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">지역별 인기도</h3>
+                                        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">지역별 인기도</h3>
                                         <div className="h-48">
                                             <Doughnut data={regionalChartData} options={{ maintainAspectRatio: false }} />
                                         </div>
                                     </div>
                                     <div>
-                                        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">연령대별 분포</h3>
+                                        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">연령대별 분포</h3>
                                         <div className="h-48">
                                             <Bar data={ageChartData} options={{ maintainAspectRatio: false }} />
                                         </div>
