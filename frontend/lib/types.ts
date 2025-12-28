@@ -114,6 +114,7 @@ export interface UpdateScoreInput {
 export interface RisingKeyword {
     keyword: string;
     growth: number;
+    searchVolume?: number;
 }
 
 export interface TrendChartData {
@@ -135,6 +136,36 @@ export interface TrendData {
         totalSearchVolume: number;
         averageCompetition: number;
         topKeyword: string;
+    };
+    marketInsights?: {
+        growthRate: string;
+        profitability: string;
+        seasonality: string;
+        targetAge: string;
+        marketSize: string;
+        trend: string;
+    };
+    competitionAnalysis?: {
+        sellerCount: number;
+        avgPrice: number;
+        avgRating: string;
+        stockTurnover: string;
+        entryBarrier: string;
+        saturation: string;
+    };
+    keywordInsights?: {
+        relatedKeywords: string[];
+        searchIntent: string;
+        regionalPopularity: Record<string, number>;
+        ageDistribution: Record<string, number>;
+    };
+    recommendations?: {
+        entryScore: number;
+        riskLevel: string;
+        optimalPrice: string;
+        expectedSales: string;
+        bestTiming: string;
+        suggestion: string;
     };
 }
 
