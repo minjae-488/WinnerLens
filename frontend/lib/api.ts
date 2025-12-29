@@ -1,0 +1,406 @@
+import {
+    ApiResponse,
+    AuthResponse,
+    LoginInput,
+    RegisterInput,
+    User,
+    Product,
+    PaginatedResponse,
+    CreateProductInput,
+    UpdateProductInput,
+    UpdateScoreInput,
+    CategoryStats,
+    TrendData,
+    InspectionResult,
+    CoupangRegistrationResult,
+    CoupangProductStatus,
+} from './types';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api/v1';
+
+class ApiClient {
+    private getHeaders(includeAuth: boolean = false): HeadersInit {
+        const headers: HeadersInit = {
+            'Content-Type': 'application/json',
+        };
+
+        if (includeAuth) {
+            const token = this.getToken();
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+        }
+
+        return headers;
+    }
+
+    private getToken(): string | null {
+        if (typeof window === 'undefined') return null;
+        return localStorage.getItem('token');
+    }
+
+    private setToken(token: string): void {
+        if (typeof window === 'undefined') return;
+        localStorage.setItem('token', token);
+    }
+
+    private removeToken(): void {
+        if (typeof window === 'undefined') return;
+        localStorage.removeItem('token');
+    }
+
+    private async request<T>(
+        endpoint: string,
+        options: RequestInit = {}
+    ): Promise<ApiResponse<T>> {
+        try {
+            const response = await fetch(`${API_URL}${endpoint}`, {
+                ...options,
+                headers: {
+                    ...this.getHeaders(false),
+                    ...options.headers,
+                },
+            });
+
+            const data: ApiResponse<T> = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error?.message || 'API request failed');
+            }
+
+            return data;
+        } catch (error: any) {
+            throw new Error(error.message || 'Network error');
+        }
+    }
+
+    // ==================== 인증 API ====================
+
+    async sendVerification(email: string): Promise<string> {
+        const response = await this.request<{ code: string }>('/auth/verify-send', {
+            method: 'POST',
+            body: JSON.stringify({ email }),
+        });
+        return response.data?.code || '';
+    }
+
+    async verifyCode(email: string, code: string): Promise<boolean> {
+        const response = await this.request<{ verified: boolean }>('/auth/verify-code', {
+            method: 'POST',
+            body: JSON.stringify({ email, code }),
+        });
+        return response.data?.verified || false;
+    }
+
+    async register(data: RegisterInput): Promise<AuthResponse> {
+        const response = await this.request<AuthResponse>('/auth/register', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+
+        if (response.data?.token) {
+            this.setToken(response.data.token);
+        }
+
+        return response.data!;
+    }
+
+    async login(input: LoginInput): Promise<AuthResponse> {
+        const response = await this.request<AuthResponse>('/auth/login', {
+            method: 'POST',
+            body: JSON.stringify(input),
+        });
+
+        if (response.data?.token) {
+            this.setToken(response.data.token);
+        }
+
+        return response.data!;
+    }
+
+    async getCurrentUser(): Promise<User> {
+        const response = await this.request<User>('/auth/me', {
+            headers: this.getHeaders(true),
+        });
+
+        return response.data!;
+    }
+
+    async updateProfile(data: { name?: string; password?: string; email?: string }): Promise<User> {
+        const response = await this.request<User>('/auth/me', {
+            method: 'PATCH',
+            headers: this.getHeaders(true),
+            body: JSON.stringify(data),
+        });
+
+        return response.data!;
+    }
+
+    logout(): void {
+        this.removeToken();
+    }
+
+    isAuthenticated(): boolean {
+        return !!this.getToken();
+    }
+
+    // ==================== 상품 API ====================
+
+    async getProducts(params?: {
+        page?: number;
+        limit?: number;
+        category?: string;
+        status?: string;
+        sortBy?: string;
+        sortOrder?: string;
+        search?: string;
+    }): Promise<PaginatedResponse<Product>> {
+        const queryParams = new URLSearchParams();
+
+        if (params) {
+            Object.entries(params).forEach(([key, value]) => {
+                if (value !== undefined && value !== null) {
+                    queryParams.append(key, String(value));
+                }
+            });
+        }
+
+        const queryString = queryParams.toString();
+        const endpoint = `/products${queryString ? `?${queryString}` : ''}`;
+
+        const response = await this.request<PaginatedResponse<Product>>(endpoint, {
+            headers: this.getHeaders(true),
+        });
+
+        return response.data!;
+    }
+
+    async getProduct(id: string): Promise<Product> {
+        const response = await this.request<Product>(`/products/${id}`, {
+            headers: this.getHeaders(true),
+        });
+
+        return response.data!;
+    }
+
+    async createProduct(input: CreateProductInput): Promise<Product> {
+        const response = await this.request<Product>('/products', {
+            method: 'POST',
+            headers: this.getHeaders(true),
+            body: JSON.stringify(input),
+        });
+
+        return response.data!;
+    }
+
+    async updateProduct(id: string, input: UpdateProductInput): Promise<Product> {
+        const response = await this.request<Product>(`/products/${id}`, {
+            method: 'PATCH',
+            headers: this.getHeaders(true),
+            body: JSON.stringify(input),
+        });
+
+        return response.data!;
+    }
+
+    async deleteProduct(id: string): Promise<void> {
+        await this.request(`/products/${id}`, {
+            method: 'DELETE',
+            headers: this.getHeaders(true),
+        });
+    }
+
+    async updateProductScore(id: string, scores: UpdateScoreInput): Promise<Product> {
+        const response = await this.request<Product>(`/products/${id}/score`, {
+            method: 'PATCH',
+            headers: this.getHeaders(true),
+            body: JSON.stringify(scores),
+        });
+
+        return response.data!;
+    }
+
+    async getCategoryStats(): Promise<CategoryStats[]> {
+        const response = await this.request<CategoryStats[]>('/products/stats/categories', {
+            headers: this.getHeaders(true),
+        });
+
+        return response.data!;
+    }
+
+    // ==================== AI API ====================
+
+    async generateProductName(category: string, keywords: string[]): Promise<string[]> {
+        const response = await this.request<{ names: string[] }>('/ai/product-name', {
+            method: 'POST',
+            headers: this.getHeaders(true),
+            body: JSON.stringify({ category, keywords }),
+        });
+
+        return response.data!.names;
+    }
+
+    async generateProductDescription(productName: string, category: string, features: string[]): Promise<string> {
+        const response = await this.request<{ description: string }>('/ai/product-description', {
+            method: 'POST',
+            headers: this.getHeaders(true),
+            body: JSON.stringify({ productName, category, features }),
+        });
+
+        return response.data!.description;
+    }
+
+    // ==================== 트렌드 API ====================
+
+    async getTrends(category?: string, period?: string): Promise<TrendData> {
+        const queryParams = new URLSearchParams();
+        if (category) queryParams.append('category', category);
+        if (period) queryParams.append('period', period);
+
+        const endpoint = `/trends?${queryParams.toString()}`;
+
+        const response = await this.request<TrendData>(endpoint, {
+            headers: this.getHeaders(true),
+        });
+
+        return response.data!;
+    }
+
+
+    // ==================== 검수 API ====================
+
+    async inspectProduct(productName: string, description?: string): Promise<InspectionResult> {
+        const response = await this.request<InspectionResult>('/inspection/inspect', {
+            method: 'POST',
+            headers: this.getHeaders(true),
+            body: JSON.stringify({ productName, description }),
+        });
+
+        return response.data!;
+    }
+
+    // ==================== 쿠팡 API ====================
+
+    async registerToCoupang(productId: string): Promise<CoupangRegistrationResult> {
+        const response = await this.request<CoupangRegistrationResult>(`/coupang/register/${productId}`, {
+            method: 'POST',
+            headers: this.getHeaders(true),
+        });
+
+        return response.data!;
+    }
+
+    async getCoupangStatus(productId: string): Promise<CoupangProductStatus> {
+        const response = await this.request<CoupangProductStatus>(`/coupang/status/${productId}`, {
+            headers: this.getHeaders(true),
+        });
+
+        return response.data!;
+    }
+
+    async deleteCoupangProduct(productId: string): Promise<{ success: boolean; message: string }> {
+        const response = await this.request<{ success: boolean; message: string }>(`/coupang/delete/${productId}`, {
+            method: 'DELETE',
+            headers: this.getHeaders(true),
+        });
+
+        return response.data!;
+    }
+
+    // ==================== 매출(Sales) API ====================
+
+    async getSalesData(): Promise<any> {
+        const response = await this.request<any>('/sales', {
+            headers: this.getHeaders(true),
+        });
+
+        return response.data!;
+    }
+
+    // ==================== 도매 소싱 API ====================
+
+    async searchWholesale(keyword: string, site: '1866' | 'domeggook', options?: any): Promise<any[]> {
+        const response = await this.request<any[]>('/sourcing/search', {
+            method: 'POST',
+            headers: this.getHeaders(true),
+            body: JSON.stringify({ keyword, site, options }),
+        });
+
+        return response.data!;
+    }
+
+    async getWholesaleProduct(id: string, site: '1866' | 'domeggook'): Promise<any> {
+        const response = await this.request<any>(`/sourcing/product/${id}?site=${site}`, {
+            headers: this.getHeaders(true),
+        });
+
+        return response.data!;
+    }
+
+    async calculatePrice(input: {
+        wholesalePrice: number;
+        quantity: number;
+        shippingCost: number;
+        extraCost?: number;
+        targetMargin: number;
+        category: string;
+        keyword?: string;
+    }): Promise<{
+        costPerUnit: number;
+        totalCost: number;
+        recommendedPrices: {
+            aggressive: number;
+            balanced: number;
+            premium: number;
+        };
+        margins: {
+            aggressive: number;
+            balanced: number;
+            premium: number;
+        };
+        competitorPrices?: number[];
+        competitiveIndex?: number;
+        breakdown: {
+            wholesaleCost: number;
+            shippingCost: number;
+            extraCost: number;
+            coupangFeeRate: number;
+        };
+    }> {
+        const response = await this.request<any>('/sourcing/calculate-price', {
+            method: 'POST',
+            headers: this.getHeaders(true),
+            body: JSON.stringify(input),
+        });
+
+        return response.data!;
+    }
+
+    async generateSourcingListing(wholesaleProduct: any): Promise<{
+        productName: string;
+        description: string;
+        features: string[];
+        specifications: Record<string, string>;
+        images: string[];
+    }> {
+        const response = await this.request<any>('/sourcing/generate-listing', {
+            method: 'POST',
+            headers: this.getHeaders(true),
+            body: JSON.stringify({ wholesaleProduct }),
+        });
+
+        return response.data!;
+    }
+
+    async registerSourcingProduct(listing: any, pricing: any): Promise<any> {
+        const response = await this.request<any>('/sourcing/register', {
+            method: 'POST',
+            headers: this.getHeaders(true),
+            body: JSON.stringify({ listing, pricing }),
+        });
+
+        return response.data!;
+    }
+}
+
+export const api = new ApiClient();

@@ -1,0 +1,201 @@
+// API 응답 타입
+export interface ApiResponse<T = any> {
+    success: boolean;
+    data?: T;
+    error?: {
+        message: string;
+        code?: string;
+        details?: any;
+    };
+}
+
+// 사용자 타입
+export interface User {
+    id: string;
+    email: string;
+    name?: string;
+    subscriptionTier: string;
+    subscriptionStatus: string;
+    createdAt: string;
+    updatedAt?: string;
+}
+
+// 인증 응답
+export interface AuthResponse {
+    user: User;
+    token: string;
+}
+
+// 상품 타입
+export interface Product {
+    id: string;
+    productName: string;
+    category: string;
+    description?: string;
+    price: number;
+    cost?: number;
+    margin?: number;
+    options?: Record<string, any>;
+    demandScore?: number;
+    competitionScore?: number;
+    marginScore?: number;
+    operabilityScore?: number;
+    totalScore?: number;
+    status: 'draft' | 'pending' | 'registered' | 'rejected';
+    coupangProductId?: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+// 페이지네이션
+export interface Pagination {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+}
+
+export interface PaginatedResponse<T> {
+    data: T[];
+    pagination: Pagination;
+}
+
+// 카테고리 통계
+export interface CategoryStats {
+    category: string;
+    total: number;
+    draft: number;
+    pending: number;
+    registered: number;
+    rejected: number;
+    avgScore: number;
+}
+
+// 폼 입력 타입
+export interface LoginInput {
+    email: string;
+    password: string;
+}
+
+export interface RegisterInput {
+    email: string;
+    password: string;
+    name?: string;
+}
+
+export interface CreateProductInput {
+    productName: string;
+    category: string;
+    description?: string;
+    price: number;
+    cost?: number;
+    margin?: number;
+    options?: Record<string, any>;
+}
+
+export interface UpdateProductInput {
+    productName?: string;
+    category?: string;
+    description?: string;
+    price?: number;
+    cost?: number;
+    margin?: number;
+    options?: Record<string, any>;
+    status?: 'draft' | 'pending' | 'registered' | 'rejected';
+}
+
+export interface UpdateScoreInput {
+    demandScore?: number;
+    competitionScore?: number;
+    marginScore?: number;
+    operabilityScore?: number;
+}
+
+export interface RisingKeyword {
+    keyword: string;
+    growth: number;
+    searchVolume?: number;
+}
+
+export interface TrendChartData {
+    labels: string[];
+    datasets: {
+        label: string;
+        data: number[];
+        borderColor: string;
+        backgroundColor: string;
+    }[];
+}
+
+export interface TrendData {
+    category: string;
+    period: string;
+    chartData: TrendChartData;
+    risingKeywords: RisingKeyword[];
+    summary: {
+        totalSearchVolume: number;
+        averageCompetition: number;
+        topKeyword: string;
+    };
+    marketInsights?: {
+        growthRate: string;
+        profitability: string;
+        seasonality: string;
+        targetAge: string;
+        marketSize: string;
+        trend: string;
+    };
+    competitionAnalysis?: {
+        sellerCount: number;
+        avgPrice: number;
+        avgRating: string;
+        stockTurnover: string;
+        entryBarrier: string;
+        saturation: string;
+    };
+    keywordInsights?: {
+        relatedKeywords: string[];
+        searchIntent: string;
+        regionalPopularity: Record<string, number>;
+        ageDistribution: Record<string, number>;
+    };
+    recommendations?: {
+        entryScore: number;
+        riskLevel: string;
+        optimalPrice: string;
+        expectedSales: string;
+        bestTiming: string;
+        suggestion: string;
+    };
+}
+
+export interface InspectionIssue {
+    type: 'error' | 'warning';
+    field: string;
+    message: string;
+    keyword?: string;
+}
+
+export interface InspectionResult {
+    passed: boolean;
+    score: number;
+    issues: InspectionIssue[];
+}
+
+// 쿠팡 등록 관련 타입
+export interface CoupangRegistrationResult {
+    success: boolean;
+    productId?: string;
+    coupangProductId?: string;
+    status: 'pending' | 'approved' | 'rejected' | 'failed';
+    message: string;
+    registeredAt: string;
+}
+
+export interface CoupangProductStatus {
+    productId: string;
+    coupangProductId: string;
+    status: 'pending' | 'approved' | 'rejected' | 'selling' | 'soldout';
+    message: string;
+    updatedAt: string;
+}
