@@ -140,27 +140,27 @@ graph LR
 
 ### ⚡ 빠른 시작 (Quick Start)
 
-#### Windows 사용자
+**WinnerLens는 이제 통합 풀스택 애플리케이션입니다!** 🎉  
+프론트엔드와 백엔드가 하나의 Next.js 앱으로 통합되어 **단일 서버**로 실행됩니다.
 
-프로젝트 폴더에서 **더블클릭으로 실행**:
+#### 3단계로 시작하기
 
+```bash
+# 1. 저장소 클론
+git clone https://github.com/minjae-488/WinnerLens.git
+cd WinnerLens/frontend
+
+# 2. Docker 시작 (PostgreSQL)
+docker-compose up -d
+
+# 3. 애플리케이션 실행
+npm install
+npx prisma generate
+npx prisma migrate dev
+npm run dev
 ```
-📁 WinnerLens/
-  └─ 🚀 start-dev.bat  ← 이 파일을 더블클릭!
-```
 
-또는 PowerShell에서:
-```powershell
-.\start-dev.ps1
-```
-
-#### 자동으로 실행되는 것들:
-- ✅ Docker 컨테이너 시작 (PostgreSQL, Redis)
-- ✅ 환경 변수 확인 및 생성
-- ✅ 의존성 자동 설치
-- ✅ 데이터베이스 마이그레이션
-- ✅ 백엔드 + 프론트엔드 서버 실행
-- ✅ 브라우저 자동 오픈 (http://localhost:3001)
+**접속**: http://localhost:3000 🚀
 
 ---
 
@@ -172,6 +172,22 @@ graph LR
 - ✅ Node.js 18+
 - ✅ Docker Desktop
 - ✅ Git
+
+### 🏗️ 아키텍처
+
+```
+WinnerLens (통합 풀스택 앱)
+├── 프론트엔드 (Next.js 14)
+│   ├── Pages: /, /login, /dashboard
+│   └── Components: UI, Charts, Forms
+└── 백엔드 (Next.js API Routes)
+    ├── /api/health - 헬스 체크
+    ├── /api/v1/auth - 인증
+    ├── /api/v1/products - 상품 관리
+    ├── /api/v1/trends - 트렌드 분석
+    ├── /api/v1/sourcing - 도매 소싱
+    └── /api/v1/ai - AI 리스팅 생성
+```
 
 ### 수동 설치 및 실행
 
@@ -189,28 +205,31 @@ graph LR
    docker-compose up -d
    ```
 
-3. **백엔드 설정**
+3. **환경 변수 설정**
    ```bash
-   cd backend
-   cp .env.example .env
-   # .env 파일에서 OPENAI_API_KEY 설정
+   cd frontend
+   cp .env.example .env.local
+   # .env.local 파일에서 필요한 값 설정:
+   # - DATABASE_URL
+   # - GEMINI_API_KEY
+   # - JWT_SECRET
+   ```
+
+4. **의존성 설치 및 데이터베이스 설정**
+   ```bash
    npm install
    npx prisma generate
    npx prisma migrate dev
-   npm run dev
    ```
 
-4. **프론트엔드 설정** (새 터미널)
+5. **개발 서버 실행**
    ```bash
-   cd frontend
-   echo "NEXT_PUBLIC_API_URL=http://localhost:3000/api/v1" > .env.local
-   npm install
    npm run dev
    ```
 
-5. **접속**
-   - 프론트엔드: http://localhost:3001
-   - 백엔드 API: http://localhost:3000
+6. **접속**
+   - 애플리케이션: http://localhost:3000
+   - API 문서: http://localhost:3000/api/v1
 
 </details>
 
